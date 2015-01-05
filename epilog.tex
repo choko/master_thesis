@@ -1,2 +1,34 @@
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}
+
+
+\section*{Future work}
+\begin{itemize}
+  \item
+    Since manual transcription of recordings is expensive
+      it would be good to make users transcribe only parts of the recordings
+      in which ASR system wasn't confident enough \todo{cite (http://www.phontron.com/paper/sperber14slt.pdf)}.
+    This idea could be used for both user transcription and CrowdFlower transcription.
+
+  \item
+    With manually transcribed recordings from CloudASR platform
+      it is possible to continuously improve accuracy of the underlying ASR system
+      by adapting the language model to the type of language that the users of the CloudASR really use.
+    Thus CloudASR could provide an option to automatically update language model
+      when a certain amount of new transcribed recordings was collected.
+
+  \item
+    Because running CloudASR platform is expensive in terms of costs for a server hosting,
+      it would be good to optimize usage of individual workers
+      so that spare workers are shut down when there is no need for them
+      and new workers are started when the traffic arise.
+    This can be achieved either by providing feedback control based systems \todo{cite (http://shop.oreilly.com/product/0636920028970.do)}
+      or by using machine learning techniques. \todo{cite}
+
+  \item
+    As CloudASR platform provides API for speech recognition,
+      it could also be used for another speech related tasks like Language Identification, Speaker Identification, Voice Activity Detection, etc.
+
+\end{itemize}
+
+
