@@ -4,20 +4,21 @@
 The most natural form of people's communication is speech.
 In order to be able to talk with a computer,
   it is crucial to have a good Automatic Speech Recognition (ASR) system.
-On one hand, there are several open-source speech recognition toolkits that can be used
-  but deployment of such toolkits requires substantial knowledge and therefore
+On one hand, there are several open-source ASR toolkits,
+  however deployment of such toolkits requires substantial knowledge therefore
   for common software developers it's not easy to use them.
-On the other hand, there are a few webservices that provide speech recognition as a service,
+On the other hand, there are a few webservices that provide ASR as a service,
   yet these webservices don't solve all problems -
   either they are paid, closed-source or they are not customizable.
-The first goal of the thesis is to develop a cloud platform for ASR
+So the first goal of the thesis is to develop a cloud platform for ASR
   that is easy to use both from user's and maintainer's point of view.
 
 Although accuracy of ASR systems is improving,
   these systems are still far from perfect.
 One of the reasons is that accuracy of ASR systems relies heavily on the amount of the training data
   and there isn't enough publicly available transcribed speech data.
-By providing free ASR webservice it is possible to collect vast amount of recordings.
+By providing free ASR webservice it is possible to collect vast amount of recordings
+  that can be manually transcribed and used later on for further research.
 Consequently, the second goal of the thesis is to create an annotation interface
   so that recordings obtained by CloudASR platform can be annotated and given back to the community.
 
