@@ -1,6 +1,48 @@
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}
 
+Goals of this thesis were to develop a cloud platform for ASR, CloudASR,
+  and an annotation interface for annotating speech data.
+These goals were successfully accomplished and in several aspects even surpassed.
+In the following sections we summarize our achievements in detail and
+  at the end we propose ideas for future work.
+
+\section*{Cloud platform for ASR}
+The first goal of this thesis was to develop a cloud platform for ASR, CloudASR,
+  that would provide batch API for speech recognition of wave files.
+The platform uses Master/Worker architecture.
+Consequently, it is able to run both on single-machine and multi-machine setup.
+The platform allows us to run workers for various language models and to scale workers according to our needs.
+To be able to run CloudASR on several machines we chose Mesos/Marathon as an underlying technology
+The current implementation of the API supports two modes of speech recognition: batch and online.
+
+Firstly, batch mode allows users to send a file with a recording to the server
+  and then it sends transcribed text back as a json.
+API of this mode is similiar to Google Speech API
+  which allows users to switch from Google Speech API to CloudASR easily.
+
+Secondly, users can transcribe speech recordings in real-time via online mode.
+We have also created Python and JavaScript libraries for using our API.
+JavaScript library achieves similiar latency as WebkitSpeechRecognition in Google Chrome \todo{add benchmark}.
+
+
+Finally, we wanted CloudASR to be easily deployable.
+Because of that, we used Docker for creating and running application containers.
+As a result only dependency that users have to install is Docker for single-node setup and Mesos Cluster for multi-node setup.
+Moreover, installation scripts for these dependencies are included within the distribution together with deployment scripts,
+  that can be used for CloudASR instances management.
+
+\section*{Annotation interface}
+The second goal of this thesis was to create an annotation interface for annotating speech data.
+First responsibility of the annotation interface is to collect and store obtained recordings.
+
+The second responsibility is to allow users to rate transcriptions of the recordings (Is the transcription correct? yes/no) or to subsequently add their own transcriptions.
+The annotation interface implements algorithm to choose golden transcription from several manual transcriptions
+  that were obtained for the recording.
+Additionally it is also possible to add manual transcriptions via external job at CrowdFlower.
+
+The third responsibility is to provide export of transcribed recordings.
+This can be done either by downloading archive from the web or by using Torrent.
 
 \section*{Future work}
 \begin{itemize}
