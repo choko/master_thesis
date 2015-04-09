@@ -35,13 +35,26 @@
 \usepackage[english]{babel}
 \usepackage{blindtext}
 
-\usepackage{xcolor}
-\newcommand\todo[1]{\textcolor{red}{!!#1!!}}
+\usepackage{verbatim}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{todonotes}
+\newcommand{\TODO}[1]{\smallskip\todo[inline,color=red!30,size=\footnotesize]{\sf \textbf{TODO:} #1}}
+\newcommand{\IDEA}[1]{\smallskip\todo[inline,color=yellow!30,size=\footnotesize]{\sf \textbf{IDEA:} #1}}
+\newcommand{\TODOIMG}[2]{
+  \begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.95\textwidth]{./img/todo.pdf}
+
+    \label{#1}
+    \caption{#2}
+  \end{figure}
+}
 
 %% Balíček hyperref, kterým jdou vyrábět klikací odkazy v PDF,
 %% ale hlavně ho používáme k uložení metadat do PDF (včetně obsahu).
 %% POZOR, nezapomeňte vyplnit jméno práce a autora.
-\usepackage[ps2pdf,unicode]{hyperref}   % Musí být za všemi ostatními balíčky
+\usepackage[unicode]{hyperref}   % Musí být za všemi ostatními balíčky
 \hypersetup{pdftitle=Development of a cloud platform for automatic speech recognition}
 \hypersetup{pdfauthor=Ondřej Klejch}
 
