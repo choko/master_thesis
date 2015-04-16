@@ -1,0 +1,12 @@
+message HeartbeatMessage {
+  required string address = 1;
+  required string model = 2;
+  required Status status = 3;
+
+  enum Status {
+    STARTED = 0;
+    WAITING = 1;
+    WORKING = 2;
+    FINISHED = 3;
+  };
+}
