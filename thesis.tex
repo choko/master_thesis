@@ -34,11 +34,12 @@
 
 \usepackage[english]{babel}
 \usepackage{blindtext}
-
+\usepackage[labelfont={small,bf},textfont={small,it}]{caption}
 \usepackage{verbatim}
 \usepackage{color}
 \usepackage{graphicx}
 \usepackage{todonotes}
+\newcommand{\BLIND}[0]{{\color{red}\blindtext}}
 \newcommand{\TODO}[1]{\smallskip\todo[inline,color=red!30,size=\footnotesize]{\sf \textbf{TODO:} #1}}
 \newcommand{\IDEA}[1]{\smallskip\todo[inline,color=yellow!30,size=\footnotesize]{\sf \textbf{IDEA:} #1}}
 \newcommand{\TODOIMG}[2]{
@@ -46,8 +47,8 @@
     \centering
     \includegraphics[width=0.95\textwidth]{./img/todo.pdf}
 
-    \label{#1}
     \caption{#2}
+    \label{#1}
   \end{figure}
 }
 
