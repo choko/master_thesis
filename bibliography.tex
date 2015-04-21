@@ -2,9 +2,10 @@
 %%% normou pro diplomovou práci je ISO 690. Jména časopisů lze uvádět zkráceně, ale jen
 %%% v kodifikované podobě. Všechny použité zdroje a prameny musí být řádně citovány.
 
-\def\bibname{Bibliography}
-\begin{thebibliography}{99}
 \addcontentsline{toc}{chapter}{\bibname}
+\nocite{*}
+\bibliography{citations}{}
+\bibliographystyle{amsplain}
 
 %\bibitem{lamport94}
 %  {\sc Lamport,} Leslie.
@@ -13,4 +14,3 @@
 %  Massachusetts: Addison Wesley, 1994.
 %  ISBN 0-201-52983-1.
 
-\end{thebibliography}

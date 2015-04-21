@@ -1,4 +1,9 @@
-all: thesis.pdf
+all:
+	pdflatex thesis.tex
+	bibtex thesis
+	pdflatex thesis.tex
+	pdflatex thesis.tex
+
 
 # Vyroba PDF primo z DVI by byla prijemnejsi, ale vetsina verzi dvipdfm nici obrazky
 # thesis.pdf: thesis.dvi
