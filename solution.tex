@@ -1,55 +1,213 @@
 \chapter{Solution}
-In this chapter I will describe the implementation of CloudASR,
-  I will stress key design choices...
+In this chapter the CloudASR implementation will be described.
+The implementation was affected by three key requirements:
+
+\begin{itemize}
+  \item
+    \textbf{Scalability} -
+      because the speech recognition is a demanding process in terms of computational resources,
+        it is not possible to handle many parallel requests on one machine.
+      Therefore the CloudASR architecture is designed to be able to scale across many machines.
+
+  \item
+    \textbf{Customizability} -
+       there are already several webservices that provide an API for speech recognition,
+         but they are not easily customizable.
+       Thus, the second requirement was to be able to host any Kaldi model on  the CloudASR platform.
+       Moreover, the CloudASR platform is able to run any ASR system,
+         if the users implement a wrapper for that system.
+
+  \item
+    \textbf{Easy deployment} -
+      complex systems as CloudASR have many dependencies and a difficult deployment process,
+        which makes their maintenance hard.
+      CloudASR is designed to has as few dependencies as possible and an one command deployment.
+
+\end{itemize}
+
+\IDEA{Mention somehow Batch/Online recognition mode}
+
 
 \section{Architecture}
-The key requirement for the architecture of CloudASR is scalability.
+In order to meet the aforementioned scalability requirement
+  the platform had to be designed from the very beginning to be able to run on many machines.
+To be able to do that the architecture consits of several nodes
+  that communicate with each other by sending messages over ZeroMQ sockets
+  (each node acts as an actor as described in \cite{hewitt1977viewing}).
+Another problem is that it is not possible start to an ASR system when the user sends a request,
+  because the ASR systems need some time load decoding graphs in memory
+  and this would add some unnecessary latency.
+Therefore the platform uses Master-Worker architecture to be able to handle many parallel requests for various languages.
+
+The CloudASR architecture as described in Figure~\ref{fig:architecture} consists of several types of nodes that can run on different machines.
+These nodes are \textbf{Master}, \textbf{Worker}, \textbf{API}, \textbf{Web},  and \textbf{Recordings Saver}.
+In the following section each node will be described in detail.
 
 
-Thus, the platform had to be designed from the very beginning to be able to run on many machines.
-
-
-\IDEA{pre fork model, it is not possible to fork on demand}
-\IDEA{not blocking architecture}
-
-The architecture as described in Figure~\ref{fig:architecture} consists of several types of nodes,
-  namely \textbf{API}, \textbf{Web}, \textbf{Master}, \textbf{Worker} and \textbf{Recordings Saver}.
-These nodes communicate with each other by sending messages over ZeroMQ sockets,
-  which allows each node to run on different machine.
-\TODO{cite: Viewing control structures as patterns of passing messages}
-
-\begin{figure}
+\begin{figure}[h]
   \centering
   \includegraphics[width=0.75\textwidth]{./img/architecture.pdf}
 
+  \caption{
+    An overview of the CloudASR architecture.
+    The most important node is \textbf{Master} to which \textbf{Workers} sends heartbeats with their state.
+    The client requests are handled by \textbf{API} which communicates with Master and Workers.
+    The processed recordings are sent to \textbf{Saver} which saves them and serves them via HTTP.
+    An annotation interface and an online demo are hosted by \textbf{Web}.
+    Finally, there are also two externals nodes \textbf{HAProxy}
+      which load-balances requests between particular application instances
+      and \textbf{DB} which stores information about processed recordings.
+  }
   \label{fig:architecture}
-  \caption{\TODO{Architecture}}
 \end{figure}
 
-\IDEA{Master-Slave architecture, multiple workers}
-\TODOIMG{fig:queue}{Queue architecture}
 
-Each node was implemented with two main design patterns in mind, namely Dependency Injection and Factory Method.
-Usage of these patterns together with message oriented architecture made possible to test the whole platform easily,
-  because it enabled to pass test doubles into the nodes
-  and then send fake messages needed to test a correct behaviour.
-As a result, a typical unit test structure looks like a test in Figure~\ref{fig:unit-test}.
-\TODO{cite: Inversion of control containers and the dependency injection pattern}
-\TODO{cite: Design patterns: Abstraction and reuse of object-oriented design}
+\subsection{Master}
+The main task of Master is to keep track about running workers and scheduling tasks to them.
+In order to be able to handle requests for various languages
+  Master has a queue of waiting workers for each language.
+Running workers send heartbeats, small messages with information about their state, to Master
+  and when the Api asks for a worker Master can return address of an available worker.
+This makes it possible to dynamically add/remove new workers without need to restart the CloudASR platform.
 
-In addition to unit tests there are also integration tests,
-  which test the factory methods that create production ready nodes,
-  and end-to-end tests,
-  which test that both batch and online recognition mode requests are handled correctly.
-This test suite ensures that developers did not break anything
-  and it also gives them confidence to change the code without fear.
+The workers can be in four different states:
+  \textbf{started}, \textbf{waiting}, \textbf{working} and \textbf{not responding}
+  and they send four different heartbeats:
+  \textbf{started}, \textbf{waiting}, \textbf{working} and \textbf{finished}.
 
-\begin{figure}
-  \verbatiminput{snippets/unit_test.py}
+The lifecycle of the worker as described in Figure~\ref{fig:worker-state} starts in in the \textbf{started} state,
+  after that it moves to the \textbf{waiting} state by sending the \textbf{waiting} heartbeat.
+The worker remains in the waiting state until \textbf{Master assings a tasks} to it,
+  then it moves to the \textbf{working} state
+  where it remains as long as it is working.
+In the working state worker sends working heartbeats periodically,
+  to inform Master that it is working and it did not fail.
+At the end of the task the Worker sends \textbf{finished} heartbeat
+  and Master changes the state of the Worker to the \textbf{waiting} state.
 
-  \label{fig:unit-test}
-  \caption{An example of unit test structure.}
-  \TODO{add better caption}
+Additionally, when a worker crashes during the processing of the task and it gets restarted,
+  it sends started heartbeat again,
+  which informs Master, that the worker was restarted and it adds it to the queue again.
+When a worker does not send any heartbeat for 10 seconds,
+  the master set the worker state to \textbf{not responding}.
+But as soon as the worker sends any heartbeat,
+  the master will set the worker to the appropriate state.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.75\textwidth]{./img/worker-state.pdf}
+
+  \caption{
+    The lifecycle of the worker starts in in the \textbf{started} state,
+      after that it moves to the \textbf{waiting} state by sending the \textbf{waiting} heartbeat.
+    The worker remains in the waiting state until \textbf{Master assings a tasks} to it,
+      then it moves to the \textbf{working} state
+      where it remains as long as it is working.
+    In the working state worker sends working heartbeats periodically,
+      to inform Master that it is working and it did not fail.
+    At the end of the task the Worker sends \textbf{finished} heartbeat
+      and Master changes the state of the Worker to the \textbf{waiting} state.
+  }
+  \label{fig:worker-state}
+\end{figure}
+
+Unfortunately, Master is a single point of failure of the CloudASR platform.
+When Master stops working no speech recognition requests can be processed,
+  because the API containers will not know to which worker they can forward the request.
+But as soon as Master starts working the platform should be available again.
+
+
+\subsection{Worker}
+Worker is a wrapper for an ASR system.
+By default Pykaldi is used but any other ASR system can be used
+  if the users implement a python wrapper for that system.
+Because CloudASR should be able to process very long recordings in the online mode,
+  it is neccessary to split the recordings into smaller chunks
+  that can be processed with limited computational resources.
+For that purpose VAD is used to detect silence in a speech,
+  because the speech can be splitted at that point without any large negative effect on the accuracy of the transcriptions.
+
+\IDEA{
+  At the end of the recognition Worker sends the whole recording together with respective n-best list to Saver.
+  Heartbeats
+    that Worker sends to Master
+    are small messages with Worker address, language it processes and its state.
+}
+
+
+\subsubsection{Deployment of New Kaldi Worker}
+One of the key requirements for CloudASR was customizability,
+  primarily customizability of the workers decoding graphs.
+Therefore, CloudASR supports an easy way for users to add their own Kaldi models.
+The only thing that the users have to do is to create a worker docker image with their models.
+
+The creation of a worker docker image consists of several steps.
+First, users have to create a script \texttt{download\_models.sh} which will download all necessary files from their server,
+  see Figure~\ref{fig:download-models} for example.
+Second, they have to create a configuration file \texttt{config.py} with appropriate configuration for the downloaded models,
+  see Figure~\ref{fig:config-py}.
+Finally, they have to copy a Dockerfile (see Figure~\ref{fig:worker-dockerfile}for example) for the worker
+  and build the docker image with the appropriate command.
+After that users can use the new worker in their application in the similar way as they use other models.
+
+It is important to note that the new worker docker image will be available only on the machine where it was built.
+If the users want to use this model on multiple machines, they have to push to their docker registry
+  or alternatively they can update Jenkins scripts \texttt{build\_workers.sh} and \texttt{push\_workers.sh} to do that for them.
+
+\begin{figure}[h]
+  \verbatiminput{snippets/download_models.sh}
+
+  \caption{An example of download\_models.sh script.}
+  \label{fig:download-models}
+\end{figure}
+
+\begin{figure}[h]
+  \verbatiminput{snippets/config.py}
+
+  \caption{An example of config.py script.}
+  \label{fig:config-py}
+\end{figure}
+
+\begin{figure}[h]
+  \verbatiminput{snippets/Dockerfile_cs_alex}
+
+  \caption{An example of worker Dockerfile.}
+  \label{fig:worker-dockerfile}
+\end{figure}
+
+
+\subsubsection{Deployment of Arbitrary Worker}
+Even though CloudASR supports only Kaldi out of the box, other ASR systems can be used too.
+Again, the only thing that the users has to do is to create a worker docker image with their ASR system.
+The only step that differs from the previous process is
+  that the users have to implement and add to the Dockerfile a script \texttt{asr.py} with their own \texttt{create\_asr} method
+  that returns \texttt{ASR} class with these methods:
+
+\begin{itemize}
+  \item
+    \texttt{reset()} - this method is called after every requests
+      and it can be used to reset the underlying ASR system.
+
+  \item
+    \texttt{recognize\_chunk(pcm)} - this method is used to process small chunks of recordings.
+      The method should accept pcm chunks with frame rate 16000
+        and it should return an interim hypothesis in form of a tuple \texttt{(confidence, transcript)}.
+
+  \item
+    \texttt{get\_final\_hypothesis} - this method is called at the end of every requests,
+      it should return a list of n-best hypotheses in form of a tuple \texttt{(confidence, transcript)}.
+
+\end{itemize}
+
+
+The creation of such a script is illustrated on Figure~\ref{fig:dummyasr} on the DummyASR class,
+  which will be also used for benchmark purposes in the Chapter~\ref{chapter:evaluation}.
+
+\begin{figure}[h]
+  \verbatiminput{snippets/dummy_asr.py}
+
+  \caption{An example of alternative ASR implementation.}
+  \label{fig:dummyasr}
 \end{figure}
 
 
@@ -61,84 +219,25 @@ The API is built on top of Flask framework with enabled asynchronous processing
   because there are no blocking operations in the API container -
   it just receives requests from clients and forwards them via ZeroMQ to the workers.
 
+
 \subsection{Web}
-\IDEA{Mention Annotation Interface and Webdemo also link to screenshots}
-\IDEA{Describe process of annotation}
-CloudASR platform also has a web interface.
-The web interface distinguishes between two types of user roles: administrators and users.
-Administrators can browse all recordings with their transcriptions and manage workers descriptions.
-Normal users are only allowed to add transcriptions to the recordings.
-
-\TODOIMG{fig:annotation-interface}{Screen of the Annotation Interface}
-
-
-Finally, the Web hosts a demo (See Figure~\ref{fig:webdemo}) of the CloudASR platform,
-  through which users can try out different workers directly in their web browsers.
-The demo has two modes, namely, dictation mode that only shows the best transcription of the recording
-  and evaluation mode that also allows users to confirm that the recording is correct.
+CloudASR platform has a web interface with an online demo and an annotation interface.
+The online demo (See Figure~\ref{fig:webdemo}) allows users to try out CloudASR directly in their web browsers.
+It has two modes, namely, dictation mode that only shows the best transcription of the recording
+  and evaluation mode that also allows users to confirm that the transcription of the recording is correct.
 
 \TODOIMG{fig:webdemo}{Screen of a Web Demo}
 
-\subsection{Master}
-\IDEA{queue for every language}
-The main task of the Master is to keep track about running workers and scheduling tasks to them.
-The Master keeps track about running workers which send heartbeats with information about their state
-  and when the Api asks for a worker address the master can return address of an available worker.
+The annotation interface distinguishes between two types of user roles: users and administrators.
+Normal users are only allowed to add transcriptions (See Figure~\ref{fig:annotation-interface}) to the recordings.
+Administrators can also browse all recordings with their transcriptions and manage workers descriptions.
 
-The workers can be in four different states:
-  \textbf{started}, \textbf{waiting}, \textbf{working} and \textbf{not responding}.
-  and it sends four different heartbeats:
-  \textbf{started}, \textbf{waiting}, \textbf{working} and \textbf{finished}.
-The worker starts in in the \textbf{started} state,
-  after that it moves to the \textbf{waiting} state by sending the \textbf{waiting} heartbeat.
-The worker remains in the waiting state until \textbf{the Master assings a tasks} to it,
-  then it moves to the \textbf{working} state
-  where it remains as long as it is working.
-In the working state worker sends working heartbeats periodically,
-  to inform the Master that it is working and it did not fail.
-At the end of the task the Worker sends \textbf{finished} heartbeat
-  and the Master changes the state of the Worker to the \textbf{working} state.
+\TODOIMG{fig:annotation-interface}{Screen of the Annotation Interface}
 
-Additionally, when a worker crashes during the processing of the task and it gets restarted,
-  it sends started heartbeat again,
-  which informs the Master, that the worker was restarted and it adds it to the queue again.
-
-When a worker does not send any heartbeat for 10 seconds,
-  the master set the worker state to \textbf{not responding}.
-But as soon as the worker sends any heartbeat,
-  the master will set the worker to the appropriate state.
-
-This whole process can be seen as a finite automaton illustrated in Figure~\ref{fig:worker-state}.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=0.75\textwidth]{./img/worker-state.pdf}
-
-  \label{fig:worker-state}
-  \caption{\TODO{Worker state transition diagram}}
-\end{figure}
-
-Unfortunately, the Master is a single point of failure of CloudASR platform.
-When the Master stops working no speech recognition requests can be processed,
-  because the API containers will not know to which worker they can forward the request.
-But as soon as the Master starts working the platform should be available again.
+\IDEA{Describe process of annotation}
+\TODO{Think of ROVER to merge user transcriptions.}
 
 
-\subsection{Worker}
-
-
-
-
-\IDEA{VAD}
-\IDEA{Kaldi}
-\IDEA{Heartbeats}
-\blindtext
-
-\subsection{Deployment of New Kaldi Worker}
-\blindtext
-
-\subsection{Deployment of Arbitrary Worker}
-\blindtext
 
 \subsection{Recordings saver}
 The main task of the Recordings saver is to save and serve recordings processed by workers.
@@ -148,24 +247,23 @@ The saver saves the wave file to the filesystem and it save the n-best hypothese
 \TODOIMG{fig:db-schema}{Database schema}
 
 
-
 \section{Request Workflow}
-\blindtext
+\BLIND
 
 \subsection{Batch Recognition}
-\blindtext
+\BLIND
 
 \TODOIMG{fig:batch}{Batch Workflow}
 
 \subsection{Online Recognition}
-\blindtext
+\BLIND
 
 \TODOIMG{fig:online}{Online Workflow}
 
 
 
 \section{Deployment}
-\blindtext
+\BLIND
 
 \subsection{Single-Host Deployment}
 Single-Host deployment allows users to run CloudASR directly on their machines.
@@ -179,17 +277,41 @@ In order to run different worker users have to edit the Makefile, especially the
 \TODO{don't use Makefile, use some python script with same interface for Multi-Host Deployment}
 
 \subsection{Multi-Host Deployment}
-\blindtext
+\BLIND
 \TODO{describe Mesos installation}
 \TODO{insert example cloudasr.json configuration for the deployment}
 
 \subsection{Scalability}
-\blindtext
+\BLIND
+
+\subsection{Testing}
+Each node was implemented with two main design patterns in mind, namely Dependency Injection \cite{fowler2004inversion} and Factory Method \cite{gamma1993design}.
+Usage of these patterns together with message oriented architecture made possible to test the whole platform easily,
+  because it enabled to pass test doubles into the nodes
+  and then send fake messages needed to test a correct behaviour.
+As a result, a typical unit test structure looks like a test in Figure~\ref{fig:unit-test}.
+
+In addition to unit tests there are also integration tests,
+  which test the factory methods that create production ready nodes,
+  and end-to-end tests,
+  which test that both batch and online recognition mode requests are handled correctly.
+This test suite ensures that developers did not break anything
+  and it also gives them confidence to change the code without fear.
+
+\begin{figure}[h]
+  \verbatiminput{snippets/unit_test.py}
+
+  \caption{An example of unit test structure.}
+  \label{fig:unit-test}
+  \TODO{add better caption}
+\end{figure}
+
 
 \subsection{Contiunous Integration \& Countinuous Delivery}
-\blindtext
+\BLIND
 
 
 \section{Discussion}
 \IDEA{Compare throughput of Queue vs Master-Slave, discuss options}
+\TODOIMG{fig:queue}{Queue architecture}
 \IDEA{different architectures solving Harddisk bottleneck, Network bottleneck}
