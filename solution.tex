@@ -124,7 +124,7 @@ By default Pykaldi is used but any other ASR system can be used
 Because CloudASR should be able to process very long recordings in the online mode,
   it is neccessary to split the recordings into smaller chunks
   that can be processed with limited computational resources.
-For that purpose VAD is used to detect silence in a speech,
+For that purpose VAD component from Alex Statistical Dialogue Systems Framework \cite{jurcicek2014alex} is used to detect silence in a speech,
   because the speech can be splitted at that point without any large negative effect on the accuracy of the transcriptions.
 
 \IDEA{
@@ -226,14 +226,27 @@ The online demo (See Figure~\ref{fig:webdemo}) allows users to try out CloudASR 
 It has two modes, namely, dictation mode that only shows the best transcription of the recording
   and evaluation mode that also allows users to confirm that the transcription of the recording is correct.
 
-\TODOIMG{fig:webdemo}{Screen of a Web Demo}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.95\textwidth]{./img/demo.pdf}
+
+  \caption{Screen of the Web Demo}
+  \label{fig:webdemo}
+\end{figure}
 
 The annotation interface distinguishes between two types of user roles: users and administrators.
 Normal users are only allowed to add transcriptions (See Figure~\ref{fig:annotation-interface}) to the recordings.
 Administrators can also browse all recordings with their transcriptions and manage workers descriptions.
 
-\TODOIMG{fig:annotation-interface}{Screen of the Annotation Interface}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.95\textwidth]{./img/annotation.pdf}
 
+  \caption{Screen of the Annotation Interface}
+  \label{fig:annotation-interface}
+\end{figure}
+
+\IDEA{mention google+ login}
 \IDEA{Describe process of annotation}
 \TODO{Think of ROVER to merge user transcriptions.}
 
@@ -248,22 +261,52 @@ The saver saves the wave file to the filesystem and it save the n-best hypothese
 
 
 \section{Request Workflow}
-\BLIND
+The CloudASR platform supports both batch and online speech recogntion.
+In the batch mode users sends wave files to the API using HTTP POST request
+  and they receive a json with a n-best transcriptions.
+Users can specify which worker they want to use in \texttt{lang} parameter.
+The batch mode has a similiar interface to Google Speech API,
+  which enables users to switch to CloudASR seamlessly.
+An example of batch recognition API usage is illustrated on a simple curl command in Figure~\ref{fig:curl},
+  a response from the API is shown in Figure~\ref{fig:curl-response}.
 
-\subsection{Batch Recognition}
-\BLIND
+\begin{figure}[h]
+  \verbatiminput{snippets/curl.bash}
 
-\TODOIMG{fig:batch}{Batch Workflow}
+  \caption{An example of batch speech recognition mode request for an en-towninfo worker using curl.}
+  \label{fig:curl}
+\end{figure}
 
-\subsection{Online Recognition}
-\BLIND
+\begin{figure}[h]
+  \verbatiminput{snippets/curl.json}
 
-\TODOIMG{fig:online}{Online Workflow}
+  \caption{An example response of batch recognition mode.}
+  \label{fig:curl-response}
+\end{figure}
 
+In contrast to batch mode in online mode users sends PCM chunks of a recording while the recording is recorder.
+Users can send these chunks as often as they want
+  but it is advised to send a chunk four times per second
+  to achieve a smooth experience.
+Chunks are sent to the server via Socket.IO technology encoded as a JSON messages.
+Because JSON does not support encoding of a binary data,
+  it is neccessary to encode PCM chunks into a string.
+Base64 proved itself to be a sensible compromise between the message size increase
+  and the implementation complexity.
+The CloudASR platform comes with a JavaScript library for online speech recognition mode.
+Figure~\ref{fig:online} shows how this library can be used for speech recognition in Google Chrome web browser.
+
+\begin{figure}[h]
+  \verbatiminput{snippets/online.js}
+
+  \caption{JavaScript code that can be used for speech recognition in Google Chrome.}
+  \label{fig:online}
+\end{figure}
 
 
 \section{Deployment}
 \BLIND
+
 
 \subsection{Single-Host Deployment}
 Single-Host deployment allows users to run CloudASR directly on their machines.
@@ -274,14 +317,43 @@ The platform can stopped by command \texttt{make stop}.
 The Makefile is prepared to run only one worker with English TownInfo model.
 In order to run different worker users have to edit the Makefile, especially the name of the worker Docker image.
 
-\TODO{don't use Makefile, use some python script with same interface for Multi-Host Deployment}
 
 \subsection{Multi-Host Deployment}
 \BLIND
 \TODO{describe Mesos installation}
-\TODO{insert example cloudasr.json configuration for the deployment}
+
+\begin{figure}[h]
+  \verbatiminput{snippets/cloudasr.json}
+
+  \caption{
+     An example of the CloudASR configuration that specifies to run 5 cs-alex workers and 5 en-towninfo workers
+       using respective Docker image.
+     With this configuration file the CloudASR platform can be run locally with command \texttt{make run\_locally}
+       or on a Mesos cluster with command \texttt{make run\_on\_mesos}.
+  }
+  \label{fig:online}
+\end{figure}
+
+\TODO{don't use Makefile, use some python script with same interface for Multi-Host Deployment}
+
 
 \subsection{Scalability}
+As mentioned before, one of the key requirements for the CloudASR platform was scalability.
+To successfully fulfill this requirement architecture was split into smaller nodes,
+  which communicates which each other by sending messages over ZeroMQ sockets.
+This enables the platform to run on several machines.
+Additionally, the heartbeating makes it possible to scale workers dynamically without need to stop the platform.
+Finally, load-balancing allows to run several API nodes and spread the load between.
+Yet, this solution is limitted by the network capacity,
+  but it is possible to deploy the CloudASR to a different data center
+  and load balance between data centers.
+This makes the CloudASR platform almost infinitely scalable.
+
+
+\subsection{Contiunous Integration \& Countinuous Delivery}
+Continuous Integration \cite{fowler2006continuous} and Continuous Delivery \cite{humble2010continuous}.
+
+
 \BLIND
 
 \subsection{Testing}
@@ -307,11 +379,7 @@ This test suite ensures that developers did not break anything
 \end{figure}
 
 
-\subsection{Contiunous Integration \& Countinuous Delivery}
-\BLIND
-
-
-\section{Discussion}
-\IDEA{Compare throughput of Queue vs Master-Slave, discuss options}
-\TODOIMG{fig:queue}{Queue architecture}
-\IDEA{different architectures solving Harddisk bottleneck, Network bottleneck}
+% \section{Discussion}
+% \IDEA{Compare throughput of Queue vs Master-Slave, discuss options}
+% \TODOIMG{fig:queue}{Queue architecture}
+% \IDEA{different architectures solving Harddisk bottleneck, Network bottleneck}

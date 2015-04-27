@@ -1,0 +1,20 @@
+{
+    "domain": "cloudasr.klejch.eu",
+    "marathon_url": "marathon_url",
+    "marathon_login": "marathon_login",
+    "marathon_password": "marathon_password",
+    "master_ip": "master_ip",
+    "connection_string": "mysql connection string",
+    "workers": [
+        {
+            "image": "ufaldsg/cloud-asr-worker-cs-alex",
+            "model": "cs-alex",
+            "instances": 5
+        }
+        {
+            "image": "ufaldsg/cloud-asr-worker-en-towninfo",
+            "model": "en-towninfo",
+            "instances": 5
+        }
+    ]
+}
