@@ -25,7 +25,6 @@ API of this mode is similiar to Google Speech API
 
 Secondly, users can transcribe speech recordings in real-time via online mode.
 We have also created Python and JavaScript libraries for using our API.
-JavaScript library achieves similiar latency as WebkitSpeechRecognition in Google Chrome \TODO{add benchmark}.
 
 
 Finally, we wanted CloudASR to be easily deployable.
@@ -51,7 +50,7 @@ This can be done either by downloading archive from the web or by using Torrent.
   \item
     Since manual transcription of recordings is expensive
       it would be good to make users transcribe only parts of the recordings
-      in which ASR system wasn't confident enough \TODO{cite (http://www.phontron.com/paper/sperber14slt.pdf)}.
+      in which ASR system wasn't confident enough \cite{sperber2014fly}.
     This idea could be used for both user transcription and CrowdFlower transcription.
 
   \item
@@ -66,8 +65,8 @@ This can be done either by downloading archive from the web or by using Torrent.
       it would be good to optimize usage of individual workers
       so that spare workers are shut down when there is no need for them
       and new workers are started when the traffic arise.
-    This can be achieved either by providing feedback control based systems \TODO{cite (http://shop.oreilly.com/product/0636920028970.do)}
-      or by using machine learning techniques. \TODO{cite}
+    This can be achieved either by providing feedback control based systems \cite{janert2013feedback}
+      or by using machine learning techniques \cite{gong2010press}.
 
   \item
     As CloudASR platform provides API for speech recognition,
