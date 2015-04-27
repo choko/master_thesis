@@ -96,15 +96,18 @@ Even though, there are several Docker Registry providers\footnote{\url{https://h
 The main programming language used for development is \textbf{Python}\footnote{\url{https://www.python.org/}}.
 Web and REST API are built on top of \textbf{Flask}\footnote{\url{http://flask.pocoo.org/}} microframework
   and they use \textbf{Gunicorn}\footnote{\url{http://gunicorn.org/}} for production deployment.
+As a database \textbf{MySQL}\footnote{\url{https://www.mysql.com/}} is used,
+  but any other SQL database can be used instead,
+  because \textbf{SQLAlchemy}\footnote{\url{http://www.sqlalchemy.org/}} is used to access the database.
 
 CloudASR architecture consists of several nodes which need to communicate between each other.
 For this communication ClousASR uses \textbf{ZeroMQ}\footnote{\url{http://zeromq.org/}},
   because of its simple design, high performance and support for every modern language.
 With ZeroMQ it is possible to create many messaging patterns,
   but CloudASR uses only two: request-reply and push-pull.
-These patterns are described in detail on Figure~\ref{fig:zeromq}.
-
-\TODOIMG{fig:zeromq}{Description of used ZeroMQ patterns.}
+In request-reply messaging pattern a sender sends a message and then waits for a reply,
+  after that another sender can send next message and wait for a reply.
+Whereas in push-pull messaging pattern senders just send messages and do not wait for a reply.
 
 
 In order to be able to send complex messages via ZeroMQ sockets, messages have to be serialized.
@@ -124,7 +127,7 @@ CloudASR uses \textbf{Google Protocol Buffers}\footnote{\url{https://developers.
   \label{fig:protobuf}
 \end{figure}
 
-\begin{table}
+\begin{table}[h]
   \begin{tabular}{rrl}
   \textbf{raw file size} & 56146 & \\
   \cline{1-3}
@@ -173,6 +176,3 @@ Because the demo demonstrates the online speech recognition mode,
   it is not possible to wait for whole recording to be recorded and then send it to the API via HTTP POST request,
   thus, CloudASR uses \textbf{Socket.IO}\footnote{\url{http://socket.io/}} to send stream of chunks to the API
   and to receieve stream of results from the API.
-
-
-\IDEA{Mention MySQL}
