@@ -4,7 +4,6 @@ In order to show that the CloudASR platform is ready for the production usage
 First, real time factor (RTF) of the batch speech recognition mode was measured and compared with Google Speech API.
 Second, latency of the online speech recognition mode was measured.
 Finally, number of parallel requests for batch speech recognition mode was measured.
-These benchmarks will be described in the following section.
 
 
 \section{RTF of Batch Speech Recognition}
@@ -15,7 +14,7 @@ Google Speech API had 60\% WER and RTF 0.3 whereas
   CloudASR had 22\% WER and RTF 0.22.
 Request times of both APIs are displayed in Figure~\ref{fig:batch-benchmark}.
 
-This benchmark shows that RTF of CloudASR batch mode is better than RTF of Google Speech API.
+This benchmark shows that RTF of CloudASR batch mode is lower than RTF of Google Speech API.
 Moreover, the benchmark shows that the CloudASR platform can achieve better accuracy than Google Speech API on limitted domains
   if the used decoding graphs are customized for that domains.
 
@@ -41,9 +40,9 @@ The reason why the online speech recognition mode is better suited for dialogue 
   that it is not neccessary to wait for the whole recording to be recorded
   and instead it is possible to get the interim results while the speech is recorded.
 Thus, dialogue systems can react quickly.
-Figure~\ref{fig:online-benchmark} shows comparison of the deelay between utterance end and the availability of the recognition results for CloudASR online and batch mode.
-
-\TODO{add conclusion}
+Results, plotted in Figure~\ref{fig:online-benchmark}, show that
+  the latency of the online speech recognition mode remains small even for long recordings
+  which is in contrast to the increasing latency of the batch speech recognition mode.
 
 \begin{figure}[h]
   \centering
@@ -63,17 +62,28 @@ Since the main bottleneck of the CloudASR platform is a number of running worker
 As a result, 1000 dummy workers could run on a Mesos cluster with 5 slaves (4CPU, 16GB RAM).
 Also, HAProxy load-balancer, which spread workload accross 5 frontend containers, was deployed.
 
+\begin{figure}[h]
+  \verbatiminput{snippets/benchmark.bash}
+
+  \caption{A simple benchmark script that sends 100 parallel requests to the CloudASR API and prints out request time for each request.}
+  \label{fig:benchmark}
+\end{figure}
+
 Then several benchmarks were run to show how RTF of the batch recognition mode changes with different number of parallel requests.
 The platform was tested with a different number of parallel requests (50, 250, 500, 750 and 1000)
   and with files with different lengths (5s, 10s, 20s, 30s, 40s, 50s and 60s).
-Results are summarized on Figure~\ref{fig:parallel-benchmark}.
+In order to be able to run so many parallel request,
+  a simple benchmark, shown in Figure~\ref{fig:benchmark}, was run on 5 machines.
+Each machine sent only one-fifth of the total number of parallel requests ten times
+  and then the average latency was computed accross all machines and all batches.
 
-Results show that CloudASR platform adds just a very little overhead compared to the raw dummy worker.
-Moreover, results shows that the platform is able to handle much more parallel requests with appropriate number of workers.
-
-\IDEA{Add benchmark code}
-\IDEA{Network capacity, similarity to online recognition}
-\IDEA{Add table with numbers}
+Results, summarized on Figure~\ref{fig:parallel-benchmark}, show
+  that CloudASR platform adds just a very little overhead compared to the raw dummy worker for small recordings.
+But the latency increases rapidly for large recordings with more than 500 parallel requests.
+This is probably caused by network capacity of the servers that run the benchmark
+  and it should not affect the platform with the real usage.
+Moreover, this will not affect the online speech recognition mode because it sends only very small messages.
+Therefore, the platform should able to handle much more parallel requests with appropriate number of workers.
 
 \begin{figure}
   \centering
