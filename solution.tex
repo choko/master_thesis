@@ -305,22 +305,21 @@ Figure~\ref{fig:online} shows how this library can be used for speech recognitio
 
 
 \section{Deployment}
-\BLIND
+The CloudASR platform supports two types of deployment: single host and multi host.
+Single host deployment allows users to run CloudASR directly on their machines with just one dependency installed - Docker.
+Whereas multi host deployment allows users to run CloudASR on a set of machines with Mesos installed.
 
-
-\subsection{Single-Host Deployment}
-Single-Host deployment allows users to run CloudASR directly on their machines.
-The only dependency for running CloudASR is Docker.
-After that it is possible to use prepared Makefile to run CloudASR by command \texttt{make run\_locally}.
-The platform can stopped by command \texttt{make stop}.
-
-The Makefile is prepared to run only one worker with English TownInfo model.
-In order to run different worker users have to edit the Makefile, especially the name of the worker Docker image.
-
-
-\subsection{Multi-Host Deployment}
-\BLIND
-\TODO{describe Mesos installation}
+Users can specify which workers they want to run in a \texttt{deployment/cloudasr.json} configuration file,
+  see Figure~\ref{fig:cloudasr-json} for an example.
+In this file they can specify names of Docker images for the workers,
+  number of instances of these workers
+  and a model name with which the worker will be available for speech recognition.
+Also, users have to specify runtime variables such as IP address of a slave where the Master should run,
+  mysql connection string and
+  a domain name that HAProxy will use to route requests to the running platform.
+Finally, users have to specify credentials for Marathon if they want to run the platform on a Mesos cluster.
+After that they can run CloudASR locally with \texttt{make run\_locally} command
+  or on a Mesos Cluster with \texttt{make run\_on\_mesos} command.
 
 \begin{figure}[h]
   \verbatiminput{snippets/cloudasr.json}
@@ -331,10 +330,11 @@ In order to run different worker users have to edit the Makefile, especially the
      With this configuration file the CloudASR platform can be run locally with command \texttt{make run\_locally}
        or on a Mesos cluster with command \texttt{make run\_on\_mesos}.
   }
-  \label{fig:online}
+  \label{fig:cloudasr-json}
 \end{figure}
 
 \TODO{don't use Makefile, use some python script with same interface for Multi-Host Deployment}
+\TODO{describe Mesos installation}
 
 
 \subsection{Scalability}
