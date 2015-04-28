@@ -351,23 +351,35 @@ This makes the CloudASR platform almost infinitely scalable.
 
 
 \subsection{Contiunous Integration \& Countinuous Delivery}
-Continuous Integration \cite{fowler2006continuous} and Continuous Delivery \cite{humble2010continuous}.
+In order to ensure quality and stability of the CloudASR platform,
+  two practises were used during the development:
+  Continuous Integration \cite{fowler2006continuous} and Continuous Delivery \cite{humble2010continuous}.
+The goal of these practises is to built, test and deploy the CloudASR platform as often as possible,
+  to get a feedback from real usage.
+To achieve that the CloudASR platform uses Jenkins-CI server,
+  that watches the CloudASR git repository
+  and on every push to the repository it builds Docker images, tests the code
+  and push the built Docker images to the Docker Registry.
+After that it is possible to deploy the CloudASR platform with a specific version
+  and it is also possible to switch back to older versions when anything goes wrong.
+To minimize failures CloudASR is deployed first to the development environment,
+  where the users can test it
+  and then it can be deployed to the production environment.
 
+One of the most important practises for Continuos Integration \& Continuous delivery is testing.
+Thus, all crucial parts of the CloudASR platform are covered with tests, namely unit tests, integration tests and end-to-end tests.
 
-\BLIND
-
-\subsection{Testing}
 Each node was implemented with two main design patterns in mind, namely Dependency Injection \cite{fowler2004inversion} and Factory Method \cite{gamma1993design}.
-Usage of these patterns together with message oriented architecture made possible to test the whole platform easily,
+Usage of these patterns together with message oriented architecture made it possible to unit test the whole platform easily,
   because it enabled to pass test doubles into the nodes
-  and then send fake messages needed to test a correct behaviour.
-As a result, a typical unit test structure looks like a test in Figure~\ref{fig:unit-test}.
+  and then send fake messages needed to test a correct behaviour of the node.
+A typical unit test structure of the CloudASR platform node looks like a test in Figure~\ref{fig:unit-test}.
 
 In addition to unit tests there are also integration tests,
   which test the factory methods that create production ready nodes,
   and end-to-end tests,
   which test that both batch and online recognition mode requests are handled correctly.
-This test suite ensures that developers did not break anything
+This test suite ensures that developers do not break anything
   and it also gives them confidence to change the code without fear.
 
 \begin{figure}[h]
