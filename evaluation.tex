@@ -33,9 +33,10 @@ Moreover, the benchmark shows that the CloudASR platform can achieve better accu
 
 \section{Latency of Online Speech Recognition}
 In the second benchmark latency of CloudASR online mode was measured.
-Since the low latency is crucial for successfull usage of speech recognition in dialogue systems
-  and there are not so many webservice that provide online speech recognition mode
-  support for online speech recognition mode can be seen as a key feature of the CloudASR platform.
+Support for online speech recognition mode can be seen as a key feature of the CloudASR platform,
+  because a low latency is crucial for successfull usage of speech recognition in dialogue systems
+  and there are not so many webservice that provide online speech recognition mode.
+
 The reason why the online speech recognition mode is better suited for dialogue systems is
   that it is not neccessary to wait for the whole recording to be recorded
   and instead it is possible to get the interim results while the speech is recorded.
@@ -56,9 +57,10 @@ Results, plotted in Figure~\ref{fig:online-benchmark}, show that
 
 
 \section{Parallel Requests Benchmark}
-Since the main bottleneck of the CloudASR platform is a number of running workers
-  workers with dummy asr engine (described in Figure~\ref{fig:dummyasr})
-  that would enable to test how many parallel requests can CloudASR handle were used.
+Since the main bottleneck of the CloudASR platform is a number of running workers.
+In order to be able to test how many parallel requests can CloudASR handle,
+  workers with dummy asr engine (described in Figure~\ref{fig:dummyasr}) were used,
+  because it is possible to run several hundreds of these workers on a single machine.
 As a result, 1000 dummy workers could run on a Mesos cluster with 5 slaves (4CPU, 16GB RAM).
 Also, HAProxy load-balancer, which spread workload accross 5 frontend containers, was deployed.
 
@@ -72,10 +74,10 @@ Also, HAProxy load-balancer, which spread workload accross 5 frontend containers
 Then several benchmarks were run to show how RTF of the batch recognition mode changes with different number of parallel requests.
 The platform was tested with a different number of parallel requests (50, 250, 500, 750 and 1000)
   and with files with different lengths (5s, 10s, 20s, 30s, 40s, 50s and 60s).
-In order to be able to run so many parallel request,
+To be able to run so many parallel request,
   a simple benchmark, shown in Figure~\ref{fig:benchmark}, was run on 5 machines.
-Each machine sent only one-fifth of the total number of parallel requests ten times
-  and then the average latency was computed accross all machines and all batches.
+Each machine sent only one-fifth of the total number of parallel requests for ten times
+  and then the average latency was computed accross all machines.
 
 Results, summarized on Figure~\ref{fig:parallel-benchmark}, show
   that CloudASR platform adds just a very little overhead compared to the raw dummy worker for small recordings.
