@@ -5,45 +5,49 @@ Goals of this thesis were to develop a cloud platform for ASR, CloudASR,
   and an annotation interface for annotating speech data.
 These goals were successfully accomplished and in several aspects even surpassed
   - in addition to original requirement to create batch recognition mode,
-  we also implemented online recognition mode.
-In the following sections we summarize our achievements in detail and
-  at the end we propose ideas for future work.
+  online speech recognition mode was implemented.
+In the following sections all achievements are summarized and
+  at the end ideas for future work are proposed.
 
 \section*{Cloud platform for ASR}
 The first goal of this thesis was to develop a cloud platform for ASR, CloudASR,
-  that would provide batch API for speech recognition of wave files.
-The platform uses Master/Worker architecture.
-Consequently, it is able to run both on single-machine and multi-machine setup.
-The platform allows us to run workers for various language models and to scale workers according to our needs.
-To be able to run CloudASR on several machines we chose Mesos/Marathon as an underlying technology
-The current implementation of the API supports two modes of speech recognition: batch and online.
-
-Firstly, batch mode allows users to send a file with a recording to the server
-  and then it sends transcribed text back as a json.
-API of this mode is similiar to Google Speech API
-  which allows users to switch from Google Speech API to CloudASR easily.
-
-Secondly, users can transcribe speech recordings in real-time via online mode.
-We have also created Python and JavaScript libraries for using our API.
+  that would provide API for batch speech recognition mode of the submitted wave files.
+This API is similiar to Google Speech API,
+  which enables users to switch to CloudASR seamlessly.
+In additition to that CloudASR provides an API for online speech recognition mode.
+The CloudASR comes with a web demo,
+  where the users can try out the online speech recognition mode with various languages.
+Furthermore, the platform is scalable, customizable and easily deployable.
 
 
-Finally, we wanted CloudASR to be easily deployable.
-Because of that, we used Docker for creating and running application containers.
-As a result only dependency that users have to install is Docker for single-node setup and Mesos Cluster for multi-node setup.
-Moreover, installation scripts for these dependencies are included within the distribution together with deployment scripts,
-  that can be used for CloudASR instances management.
+In terms of scalability,
+  the platform is able to run both on single-machine and multi-machine setup
+  and it allows to scale number of running workers according to users needs.
+Additionally, the platform can run several API instances and load-balance between them.
+The benchmarks show that the platform is able to handle more than 1000 parallel requests
+  given enough computational resources.
+
+The platform can handle requests for various languages at the same time.
+Moreover, users can create workers for new languages using Pykaldi
+  or they can even create workers for an arbitrary ASR systems
+  if they provide a Python wrapper for that system.
+
+Finally, CloudASR is easily deployable.
+It uses Docker for creating and running application containers.
+Therefore, users have to install only Docker for a single machine setup
+  and a Mesos cluster for a multi machine setup.
+Then it is possible to run the CloudASR platform with just one command.
+
 
 \section*{Annotation interface}
-The second goal of this thesis was to create an annotation interface for annotating speech data.
-First responsibility of the annotation interface is to collect and store obtained recordings.
-
-The second responsibility is to allow users to rate transcriptions of the recordings (Is the transcription correct? yes/no) or to subsequently add their own transcriptions.
-The annotation interface implements algorithm to choose golden transcription from several manual transcriptions
+The second goal of this thesis was to create an annotation interface for annotating submitted recordings.
+Its responsibility is to collect and store obtained recordings together with their transcriptions.
+Then users can rate transcriptions of the recordings
+  or they can add their own transcriptions
+  if they think that none transcription is correct.
+The annotation interface allows administrators to choose golden transcription from several manual transcriptions
   that were obtained for the recording.
-Additionally it is also possible to add manual transcriptions via external job at CrowdFlower.
-
-The third responsibility is to provide export of transcribed recordings.
-This can be done either by downloading archive from the web or by using Torrent.
+Additionally CloudASR also supports addition of manual transcriptions via external job at CrowdFlower.
 
 \section*{Future work}
 \begin{itemize}
