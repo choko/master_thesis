@@ -1,0 +1,16 @@
+{
+  "msg_id" : "e83406f9-238c-40c8-9a99-6913b33b4301",
+  "_text" : "I'm looking for a bar",
+  "outcomes" : [ {
+    "_text" : "I'm looking for a bar",
+    "intent" : "restaurantSearch",
+    "entities" : {
+      "search_query" : [ {
+        "suggested" : true,
+        "value" : "bar",
+        "type" : "value"
+      } ]
+    },
+    "confidence" : 0.912
+  } ]
+}

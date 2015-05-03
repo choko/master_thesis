@@ -33,41 +33,77 @@
 
 
 \section{Open-Source ASR tools}
-\blindtext
+
 
 \subsection{HTK}
-HTK \cite{young1997htk}
-\blindtext
+The HTK \cite{young1997htk} toolkit
 
-\subsection{RWTH}
-RWTH \cite{rybach2009rwth}
-\blindtext
-
-\subsection{Sphinx}
-Sphinx \cite{lee1990overview}
+\subsection{Julius}
+Julius \cite{lee2001julius}
 \blindtext
 
 \subsection{Kaldi}
-Kaldi \cite{povey2011kaldi}
-\blindtext
+Kaldi \cite{povey2011kaldi} is a free, open-source toolkit for speech recognition written in C++.
+Its speech recognition system is based on finite-state transducers
+  and it supports modelling of arbitrary phonetic-context sizes,
+  acoustic modelling with subspace Gaussian mixture models (SGMM)
+  as well as standard Gaussian mixture models and deep neural networks,
+  together with all commonly used linear and affine transforms.
 
-\subsection{PyKaldi}
-PyKaldi \cite{platek2014free}
-\blindtext
+Furthermore, there is also a Python wrapper for Kaldi called PyKaldi \cite{platek2014free},
+  which supports the online speech recognition.
+CloudASR uses PyKaldi as a default speech recognition system.
+
+\subsection{RWTH}
+RWTH \cite{rybach2009rwth} is a publicly available speech recognition toolkit developed at Aachen University.
+It includes state of the art speech recognition technology for acoustic model training and decoding.
+Besides, its notable components are speaker adaptation,
+  speaker adaptive training,
+  unsupervised training,
+  a finite state automata library,
+  and an efficient tree search decoder.
 
 
-\section{ASR cloud services}
-\blindtext
+\section{Public ASR services}
+In addition to these open sources ASR toolkits
+  there are also several web services that provide an API for speech recognition.
+Some of these services will be described in the following section.
 
-\subsection{Google Speech API}
-\footnote{\url{https://www.google.com/intl/en/chrome/demos/speech.html}}
-\blindtext
+\textbf{Google Speech API} supports speech recognition for 39 languages and their dialects.
+Its batch API, illustrated in Figure~\ref{fig:google-api}, is very simple and can be used for transcription of the wave or flac files.
+Additionally,
+  Google Speech API supports the online speech recognition mode through JavaScript class SpeechRecognition in Google Chrome web browser.\footnote{\url{https://www.google.com/intl/en/chrome/demos/speech.html}}
 
-\subsection{Nuance}
-\footnote{\url{http://www.nuance.com/for-developers/dragon/index.htm}}
-\blindtext
+\begin{figure}[h]
+  \verbatiminput{snippets/google-api.bash}
 
-\subsection{Wit.ai}
-\footnote{\url{https://wit.ai/}}
-\blindtext
+  \caption{An example of Google Speech API batch speech recognition mode request for a transcription of a recording in British English.}
+  \label{fig:google-api}
+\end{figure}
+
+
+\textbf{Nuance Dragon NaturallySpeaking}\footnote{\url{http://www.nuance.com/for-developers/dragon/index.htm}}
+  is the second provider of the API for speech recognition.
+It provides software development kits for Windows and mobile applications.
+It also has a version that can be deployed on a server and used as a API for other applications.
+
+The last API provider that will be mentioned here is \textbf{wit.ai}\footnote{\url{https://wit.ai/}}.
+It supports 11 languages via an API similar to Google Speech API, see Figure~\ref{fig:wit-ai-request} for an example,
+  and in addition to speech recognition it also supports intent classification of the submitted recordings,
+  see Figure~\ref{fig:wit-ai-response} for an exemplar response from the wit.ai.
+
+\begin{figure}[h]
+  \verbatiminput{snippets/google-api.bash}
+
+  \caption{An example of wit.ai API request for a transcription of a recording.}
+  \label{fig:wit-ai-request}
+\end{figure}
+
+\begin{figure}[h]
+  \verbatiminput{snippets/wit-ai-response.json}
+
+  \caption{An exemplar response from wit.ai API with a recording of a sentence: "I'm looking for a bar."}
+  \label{fig:wit-ai-response}
+  \vspace*{6in}
+\end{figure}
 
