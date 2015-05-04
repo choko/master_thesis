@@ -94,15 +94,22 @@ For instance, the recurrent neural network based language models yielded state-o
 
 
 \section{Open-Source ASR Tools}
+In the following section some of the open-source ASR tools will be described.
+Namely, \textbf{HTK}, \textbf{Julius}, \textbf{Kaldi} and \textbf{RWTH}.
 
 
-The \textbf{HTK} \cite{young1997htk} toolkit
-\BLIND
+\textbf{HTK} \cite{young1997htk} is the first toolkit, that will be described.
+HTK is a toolkit for building and manipulating hidden Markov models.
+It consists of a set of library modules and tools that provide sophisticated facilities for speech analysis, HMM training, testing and results analysis.
+Furthermore, it supports HMMs using both continuous density mixture Gaussians and discrete distributions and can be used to build complex HMM systems.
 
-\textbf{Julius} \cite{lee2001julius}
-\BLIND
+The second toolkit is \textbf{Julius} \cite{lee2001julius}, high-performance large vocabulary speech recognition decoder,
+  that can perform almost real-time decoding with 60k words in the vocabulary.
+It supports statistical n-gram language model and rule-based grammars,
+  as well as Hidden Markov Model (HMM) as an acoustic model
+Julius can be also used with models trained for HTK toolkit.
 
-\textbf{Kaldi} \cite{povey2011kaldi} is a free, open-source toolkit for speech recognition written in C++.
+Next described toolkit is \textbf{Kaldi} \cite{povey2011kaldi} -- a free, open-source toolkit for speech recognition written in C++.
 Its speech recognition system is based on finite-state transducers
   and it supports modelling of arbitrary phonetic-context sizes,
   acoustic modelling with subspace Gaussian mixture models (SGMM)
@@ -113,7 +120,8 @@ Furthermore, there is also a Python wrapper for Kaldi called PyKaldi \cite{plate
   which supports the online speech recognition.
 CloudASR uses PyKaldi as a default speech recognition system.
 
-\textbf{RWTH} \cite{rybach2009rwth} is a publicly available speech recognition toolkit developed at Aachen University.
+The last toolkit that will be described is \textbf{RWTH} \cite{rybach2009rwth},
+  which is a publicly available speech recognition toolkit developed at Aachen University.
 It includes state of the art speech recognition technology for acoustic model training and decoding.
 Besides, its notable components are speaker adaptation,
   speaker adaptive training,
