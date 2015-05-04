@@ -104,6 +104,19 @@ It supports 11 languages via an API similar to Google Speech API, see Figure~\re
 
   \caption{An exemplar response from wit.ai API with a recording of a sentence: "I'm looking for a bar."}
   \label{fig:wit-ai-response}
-  \vspace*{6in}
 \end{figure}
 
+
+\section{Obtaining Manual Transcriptions}
+A large amount of transcribed recordings is needed in order to train a good ASR system.
+But a manual transcription of the recordings by professional transcribers is expensive and time demanding,
+  typically, professional transcribers need 6 hours to transcribe 1 hour of speech data \cite{williams2011crowd}.
+Furthermore, it is difficult to find enough professional transcribers to transcribe the required amount of speech data in short time.
+
+Recently, it was shown that crowd-sourcing can be used for cheap, fast and good enough manual transcription of speech data \cite{novotney2010cheap}.
+With crowd-sourcing, speech data is splitted into small chunks that are then transcribed by several non-professional transcribers.
+Their transcriptions are then used to select the best transcription for the recording, for example with ROVER algorithm \cite{marge2010using}, and used for training of new ASR systems.
+Also, transcriptions from non-professional transcribers are only $6\%$ worse than professional transcriptions
+  and they cost only $\frac{1}{30}$ of the cost of professional transcription.
+Finally, services like \textbf{Amazon Mechanical Turk}\footnote{\url{https://www.mturk.com}}
+  or \textbf{CrowdFlower}\footnote{\url{http://www.crowdflower.com/}} already support the speech transcription tasks.
