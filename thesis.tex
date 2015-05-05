@@ -39,6 +39,7 @@
 \usepackage{color}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{acronym}
 \usepackage{todonotes}
 \newcommand{\BLIND}[0]{{\color{red}\blindtext}}
 \newcommand{\TODO}[1]{\smallskip\todo[inline,color=red!30,size=\footnotesize]{\sf \textbf{TODO:} #1}}
@@ -297,10 +298,21 @@ cloud, Kaldi, ASR
 \include{bibliography}
 
 %%% Tabulky v diplomové práci, existují-li.
-\chapwithtoc{List of Tables}
+% \chapwithtoc{List of Tables}
 
 %%% Použité zkratky v diplomové práci, existují-li, včetně jejich vysvětlení.
 \chapwithtoc{List of Abbreviations}
+\begin{acronym}[TDMA]
+  \acro{API} {Application Programming Interface}
+  \acro{ASR} {Automatic Speech Recognition}
+  \acro{DNN} {Deep Neural Network}
+  \acro{HMM} {Hidden Markov Model}
+  \acro{RTF} {Real Time Factor}
+  \acro{SGMM} {Subspace Gaussian Mixture Model}
+  \acro{VAD} {Voice Activity Detection}
+  \acro{WER} {Word Error Rate}
+\end{acronym}
+
 
 %%% Přílohy k diplomové práci, existují-li (různé dodatky jako výpisy programů,
 %%% diagramy apod.). Každá příloha musí být alespoň jednou odkazována z vlastního
