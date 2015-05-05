@@ -140,10 +140,24 @@ Latency is a delay between the end of the recording and the end of the recogniti
   RTF = \frac{time(decode(R))}{length(R)}
 \end{equation}
 
+
+\section{Voice Activity Detection}
+Voice Activity Detection (VAD) is a technique used to detect presence or absence of human speech in the recording.
+There are several ways how to implement VAD,
+  for example, support vector machines \cite{mesgarani2006discrimination}, gaussian mixture models \cite{ng2012developing} or deep neural networks \cite{ryant2013speech} can be used.
+The last one, using deep neural networks, will be described here.
+
+The VAD using deep neural networks starts by extracting features every 10ms from a 25 ms analysis window.
+These features are then normalized and concatenated to a feature vector,
+  which is used as an input to the DNN.
+The DNN then returns the posterior probability of speech being present in the analysis windows.
+This posterior probability is compared with a treshold,
+  that is chosen so that false alarm and miss rates are equal on the test set,
+  in order to yield decision whether the analysis window contains speech/non-speech.
+
 \section{Open-Source ASR Tools}
 In the following section some of the open-source ASR tools will be described.
 Namely, \textbf{HTK}, \textbf{Julius}, \textbf{Kaldi} and \textbf{RWTH}.
-
 
 \textbf{HTK} \cite{young1997htk} is the first toolkit, that will be described.
 HTK is a toolkit for building and manipulating hidden Markov models.
