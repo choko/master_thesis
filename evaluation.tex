@@ -3,7 +3,7 @@ In order to show that the CloudASR platform is ready for the production usage
   several benchmarks were made.
 First, real time factor (RTF) of the batch speech recognition mode was measured and compared with Google Speech API.
 Second, latency of the online speech recognition mode was measured.
-Finally, number of parallel requests for batch speech recognition mode was measured.
+Finally, number of parallel requests for batch speech recognition mode was measured to show that CloudASR is scalable.
 
 
 \section{RTF of Batch Speech Recognition}
@@ -33,13 +33,12 @@ Moreover, the benchmark shows that the CloudASR platform can achieve better accu
 
 \section{Latency of Online Speech Recognition}
 In the second benchmark latency of CloudASR online mode was measured.
-Support for online speech recognition mode can be seen as a key feature of the CloudASR platform,
-  because a low latency is crucial for successful usage of speech recognition in dialogue systems
-  and there are not so many webservices that provide online speech recognition mode.
+Low latency is crucial for successful usage of speech recognition in dialogue systems,
+  but there are not so many web services that provide online speech recognition mode.
+Therefore, support for online speech recognition mode can be seen as a key feature of the CloudASR platform.
 
 The reason why the online speech recognition mode is better suited for dialogue systems is
-  that it is not necessary to wait for the whole recording to be recorded
-  and instead it is possible to get the interim results while the speech is being recorded.
+  that it is possible to get the results while the speech is being recorded.
 Thus, dialogue systems can react quickly.
 Results, plotted in Figure~\ref{fig:online-benchmark}, show that
   the latency of the online speech recognition mode remains small even for long recordings
@@ -57,12 +56,10 @@ Results, plotted in Figure~\ref{fig:online-benchmark}, show that
 
 
 \section{Parallel Requests Benchmark}
-The main bottleneck of the CloudASR platform is a number of running workers.
-In order to be able to test how many parallel requests can CloudASR handle,
-  workers with dummy ASR engine (described in Figure~\ref{fig:dummyasr}) were used,
-  because it is possible to run several hundreds of these workers on a single machine.
+Because the main bottleneck of the CloudASR platform is a number of running workers,
+  workers with dummy ASR engine (described in Figure~\ref{fig:dummyasr}) were used to be able to test how many parallel requests can CloudASR handle.
 As a result, 1000 dummy workers could run on a Mesos cluster with 5 slaves (4CPU, 16GB RAM).
-Also, HAProxy load-balancer, which spreads workload across 5 frontend containers, was deployed.
+Also, workload was spread across 5 frontend containers with a load-balancer.
 
 \begin{figure}[h]
   \verbatiminput{snippets/benchmark.bash}
@@ -76,7 +73,7 @@ The platform was tested with a different number of parallel requests (50, 250, 5
   and with files with different lengths (5s, 10s, 20s, 30s, 40s, 50s and 60s).
 To be able to run so many parallel requests,
   a simple benchmark, shown in Figure~\ref{fig:benchmark}, was run on 5 machines.
-Each machine sent only one-fifth of the total number of parallel requests for ten times
+Each machine sent one-fifth of the total number of parallel requests ten times
   and then the average latency was computed across all machines.
 
 Results, summarized in Figure~\ref{fig:parallel-benchmark}, show

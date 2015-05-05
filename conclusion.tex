@@ -3,10 +3,11 @@
 
 Goals of this thesis were to develop a cloud platform for ASR, CloudASR,
   and an annotation interface for annotating speech data.
-These goals were successfully accomplished and in several aspects even surpassed
-  - in addition to original requirement to create batch recognition mode,
-  online speech recognition mode was implemented.
-In the following sections all achievements are summarized and
+These goals were successfully accomplished.
+Furthermore, in addition to the original requirement to create batch speech recognition mode,
+  online speech recognition mode was also implemented.
+
+In the following sections all important results of this thesis are summarized and
   at the end ideas for future work are proposed.
 
 \section*{Cloud platform for ASR}
@@ -14,67 +15,63 @@ The first goal of this thesis was to develop a cloud platform for ASR, CloudASR,
   that would provide API for batch speech recognition mode of the submitted wave files.
 This API is similar to Google Speech API,
   which enables users to switch to CloudASR seamlessly.
-In addition to that CloudASR provides an API for online speech recognition mode.
+In addition, CloudASR provides an API for online speech recognition.
 The CloudASR comes with a web demo,
-  where the users can try out the online speech recognition mode with various languages.
+  where the users can try out the online speech recognition in various languages.
 Furthermore, the platform is scalable, customizable and easily deployable.
 
 
 In terms of scalability,
-  the platform is able to run both on single-machine and multi-machine setup
-  and it allows to scale number of running workers according to users' needs.
-Additionally, the platform can run several API instances and load-balance between them.
-The benchmarks show that the platform is able to handle more than 1000 parallel requests
-  given enough computational resources.
+  the platform is able to run both on a single machine and a multi-machine setup
+  and it allows to scale the number of running workers according to the users' needs.
+The benchmarks show that the platform is able to handle more than 1000 parallel requests.
 
 The platform can handle requests for various languages at the same time.
-Moreover, users can create workers for new languages using Pykaldi
+Users can create workers for new languages using Pykaldi
   or they can even create workers for an arbitrary ASR systems
   if they provide a Python wrapper for that system.
 
-Finally, CloudASR is easily deployable.
-It uses Docker for creating and running application containers.
-Therefore, users have to install only Docker for a single machine setup
-  and a Mesos cluster for a multi machine setup.
-Then it is possible to run the CloudASR platform with just one command.
+CloudASR is easily deployable,
+  it uses Docker for creating and running application containers on a single machine
+  and it uses a Mesos cluster to run CloudASR on multiple machines.
 
 
 \section*{Annotation interface}
 The second goal of this thesis was to create an annotation interface for annotating submitted recordings.
-Its responsibility is to collect and store obtained recordings together with their transcriptions.
-Then users can rate transcriptions of the recordings
-  or they can add their own transcriptions
-  if they think that none is correct.
-The annotation interface allows administrators to choose golden transcription from several manual transcriptions
+Its responsibility is to collect and store submitted speech recordings together with their transcriptions.
+Then users can rate the automatic transcriptions of the recordings
+  or they can provide their own transcriptions
+  if they think that none of the automatic transcriptions is correct.
+The annotation interface allows the administrators to choose the best transcription from several manual transcriptions
   that were obtained for the recording.
-Additionally CloudASR also supports addition of manual transcriptions via external job at CrowdFlower.
+Additionally, external service, such as CrowdFlower, can be used to obtain manual transcriptions of the selected recordings.
 
 \section*{Future work}
 \begin{itemize}
   \item
     Since manual transcription of recordings is expensive
       it would be good to make users transcribe only parts of the recordings
-      in which ASR system wasn't confident enough \cite{sperber2014fly}.
+      in which ASR system was not confident enough \cite{sperber2014fly}.
     This idea could be used for both user transcription and CrowdFlower transcription.
 
   \item
     With manually transcribed recordings from CloudASR platform
-      it is possible to continuously improve accuracy of the underlying ASR system
+      it is possible to continuously improve the accuracy of the underlying ASR system
       by adapting the language model to the type of language that the users of the CloudASR really use.
     Thus CloudASR could provide an option to automatically update language model
       when a certain amount of new transcribed recordings was collected.
 
   \item
-    Because running CloudASR platform is expensive in terms of costs for a server hosting,
-      it would be good to optimize usage of individual workers
-      so that spare workers are shut down when there is no need for them
-      and new workers are started when the traffic arise.
-    This can be achieved either by providing feedback control based systems \cite{janert2013feedback}
+    Because running CloudASR platform is expensive in terms of the costs for the server hosting,
+      it would be good to optimize the usage of the individual workers.
+    Spare workers should be shut down when there is no need for them
+      and new workers should be started when the traffic arise.
+    This can be achieved either by a feedback control based system \cite{janert2013feedback}
       or by using machine learning techniques \cite{gong2010press}.
 
   \item
-    As CloudASR platform provides API for speech recognition,
-      it could also be used for another speech related tasks like Language Identification, Speaker Identification, Voice Activity Detection, etc.
+    As CloudASR platform provides an API for speech recognition,
+      it could also be used for another speech related tasks like Language Identification, Speaker Identification or Voice Activity Detection.
 
 \end{itemize}
 

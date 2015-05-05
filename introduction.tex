@@ -1,28 +1,28 @@
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
 
-The most natural form of human communication is speech.
+Speech is the most natural form of human communication.
 In order to be able to talk with a computer,
   it is crucial to have a good Automatic Speech Recognition (ASR) system.
 On one hand, there are several open-source ASR toolkits,
-  however deployment of such toolkits requires substantial knowledge.
-Therefore, for common software developers it is not easy to use them.
+  however deployment of such toolkits requires substantial knowledge,
+  which makes them difficult to use for common software developers.
 On the other hand, there are a few web services that provide ASR,
   yet these web services do not solve all problems -
   either they are paid, closed-source or they are not customizable.
 So \textbf{the first goal of the present thesis is to develop a cloud platform for ASR}
   that is easy to use both from user's and maintainer's point of view.
 
-Although the accuracy of ASR systems is improving,
+Although the quality of ASR systems is improving,
   these systems are still far from perfect.
-One of the reasons is that the accuracy of ASR systems relies heavily on the amount of the training data,
-  and there is not enough publicly available transcribed speech data.
+One of the reasons is that the quality of ASR systems depends heavily on the amount of the training data,
+  and there is not enough publicly available transcribed speech data for all languages.
 By providing free ASR web service it is possible to collect vast amount of recordings
-  that can be manually transcribed and used later on for further research.
-Consequently, \textbf{the second goal of the thesis is to create an annotation interface}
+  that can be manually transcribed.
+Consequently, \textbf{the second goal of the present thesis is to create an annotation interface}
   so that recordings obtained by CloudASR platform can be annotated and given back to the community.
 
-The following text will describe the development and deployment of CloudASR platform and its annotation interface.
+The following text development and deployment of CloudASR platform and its annotation interface are described.
 Chapter~1 introduces Automatic Speech Recognition theory and tools related to CloudASR.
 In Chapter~2, tools used for CloudASR development and deployment are presented.
 The implementation of CloudASR platform is described in Chapter~3.

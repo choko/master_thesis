@@ -14,11 +14,11 @@ But this approach makes the maintenance of these systems difficult,
   because the deployment is time consuming, error-prone and it is not replicable.
 The ultimate goal for the CloudASR deployment was the exact opposite: fast and replicable deployment.
 
-The most important tool used during development was \textbf{Docker} \cite{merkel2014docker}
+The most important tool used during the development was \textbf{Docker} \cite{merkel2014docker}
   -- a portable, lightweight application runtime and packaging tool.
 It allows to specify dependencies and environmental variables for a process
-  and it allows to build an image from this specification called Dockerfile,
-  see Figure~\ref{fig:dockerfile} for example.
+  and it allows to build an image from this specification called Dockerfile
+  (see Figure~\ref{fig:dockerfile} for example).
 Once this image is built it can be used on any machine with Docker installed,
   which makes the deployment fast and replicable,
   because it is not necessary to install all dependencies on every machine.
@@ -39,19 +39,19 @@ Additionally, the usage of Docker images removes bugs caused by different versio
 \end{figure}
 
 
-When running an application in a cloud it is neccessary to monitor all servers and handle failovers.
-But with the increasing number of servers the maintenance costs grows rapidly.
-Therefore it is not possible to do that manually.
+When running an application in the cloud it is neccessary to monitor all servers and handle failovers.
+But with an increasing number of servers, maintenance costs grow rapidly.
+Therefore, it is not possible to manage the application manually.
 The tool that allows CloudASR to run on many servers is \textbf{Mesos} \cite{hindman2011mesos}.
-It lets users program against set of machines like it is a single machine,
+It lets users program against a set of machines in the same way as if it was a single machine,
   which means that it is possible to run and scale an application on a set of servers in a similar way as on a single machine.
-Mesos takes care about scheduling and high availability of the platform.
-Thus, whenever some part of the CloudASR crashes Mesos will try to fix that.
+Mesos takes care of the scheduling and high availability of the platform.
+Thus, whenever some part of the CloudASR crashes, Mesos will try to restart it.
 Finally, Mesos supports Docker so the images that are used in development can be also used on a Mesos cluster.
 
 \textbf{Marathon}\footnote{\url{https://mesosphere.github.io/marathon/}} is a framework built on top of Mesos whose main responsibility is to launch long running applications.
 It is an entrypoint for running and scaling the applications running on a Mesos cluster.
-It has a web user interface (see Figure~\ref{fig:marathon}) and REST API,
+It has a web user interface (see Figure~\ref{fig:marathon}) and a REST API,
   through which applications can be started, scaled or stopped easily.
 
 \begin{figure}
@@ -66,21 +66,20 @@ It has a web user interface (see Figure~\ref{fig:marathon}) and REST API,
 
 Since the traffic of CloudASR platform can be very large,
   it is not possible to process all HTTP requests by one application server.
-Therefore, there must be a load-balancer to distribute workload between application servers.
-CloudASR platform uses \textbf{HAProxy}\footnote{\url{http://www.haproxy.org/}} load-balancer,
+Therefore, CloudASR platform uses \textbf{HAProxy}\footnote{\url{http://www.haproxy.org/}} load-balancer to distribute workload between application servers,
   but any other load-balancers can also be used with appropriate setup.
 
 
 
 \section{Continuous Integration \& Delivery}
-During development of CloudASR several practises were obeyed,
+Several practises were obeyed during the development,
   namely Continuous Integration and Continuous Delivery.
-In order to be able to do that a platform which consisted of \textbf{Jenkins-CI}\footnote{\url{https://jenkins-ci.org/}} and \textbf{Docker Registry}\footnote{\url{https://github.com/docker/docker-registry}} had to be deployed.
+For this a platform which consisted of \textbf{Jenkins-CI}\footnote{\url{https://jenkins-ci.org/}} and \textbf{Docker Registry}\footnote{\url{https://github.com/docker/docker-registry}} was deployed.
 
 The most important tool for Continuous Integration \& Delivery of CloudASR is Jenkins-CI.
 Its task is to watch CloudASR git repository
   and whenever a new code is pushed into this repository it schedules a new build of the platform.
-During this build the most recent code is pulled from the repository and then the docker images are built.
+During this build, the most recent code is pulled from the repository and then the new docker images are built.
 After that tests are run to check that the new code did not break anything.
 Finally, successfully built images are tagged with current build number and pushed to the Docker Registry.
 
@@ -88,26 +87,26 @@ Finally, successfully built images are tagged with current build number and push
 Docker Registry is a repository of Docker images.
 Even though, there are several Docker Registry providers\footnote{\url{https://hub.docker.com/}, \url{https://quay.io/}},
   which are free for open-source projects,
-  CloudASR uses its own free Docker Registry,
-  in order to be also able to use proprietary software that cannot be shared with public.
+  CloudASR uses its own free Docker Registry in order to be able to use also proprietary software that cannot be shared with public.
 
 
 \section{Backend}
-The main programming language used for development is \textbf{Python}\footnote{\url{https://www.python.org/}}.
-Web and REST API are built on top of \textbf{Flask}\footnote{\url{http://flask.pocoo.org/}} microframework
-  and they use \textbf{Gunicorn}\footnote{\url{http://gunicorn.org/}} for production deployment.
-As a database \textbf{MySQL}\footnote{\url{https://www.mysql.com/}} is used,
+The main programming language used for backend development is \textbf{Python}\footnote{\url{https://www.python.org/}}.
+Web is built on top of \textbf{Flask}\footnote{\url{http://flask.pocoo.org/}} microframework
+  and it uses \textbf{Gunicorn}\footnote{\url{http://gunicorn.org/}} for production deployment.
+\textbf{MySQL}\footnote{\url{https://www.mysql.com/}} is used as a database,
   but any other SQL database can be used instead,
-  because \textbf{SQLAlchemy}\footnote{\url{http://www.sqlalchemy.org/}} is used to access the database.
+  because the database is accessed  through \textbf{SQLAlchemy}\footnote{\url{http://www.sqlalchemy.org/}}.
 
-CloudASR architecture consists of several nodes which need to communicate between each other.
-For this communication CloudASR uses \textbf{ZeroMQ}\footnote{\url{http://zeromq.org/}},
+The CloudASR architecture consists of several nodes which need to communicate between each other.
+CloudASR uses \textbf{ZeroMQ}\footnote{\url{http://zeromq.org/}} for this communication
   because of its simple design, high performance and support for every modern language.
-With ZeroMQ it is possible to create many messaging patterns,
+With ZeroMQ,
+  it is possible to create many messaging patterns,
   but CloudASR uses only two: request-reply and push-pull.
-In request-reply messaging pattern a sender sends a message and then waits for a reply,
+In the request-reply messaging pattern a sender sends a message and then waits for a reply,
   after that another sender can send next message and wait for a reply.
-Whereas in push-pull messaging pattern senders just send messages and do not wait for replies.
+On the other hand, in the push-pull messaging pattern senders just send messages and do not wait for replies.
 
 
 In order to be able to send complex messages via ZeroMQ sockets, messages have to be serialized.
@@ -143,15 +142,15 @@ CloudASR uses \textbf{Google Protocol Buffers}\footnote{\url{https://developers.
   \label{fig:protobuf-benchmark}
 \end{table}
 
-As an ASR toolkit CloudASR uses Python wrapper for the \textbf{Kaldi speech recognition toolkit} \cite{povey2011kaldi} called \textbf{Pykaldi} \cite{platek2014free}.
+CloudASR uses \textbf{Pykaldi} \cite{platek2014free} as a Python wrapper for the \textbf{Kaldi speech recognition toolkit} \cite{povey2011kaldi}.
 Because CloudASR should be able to process very long recordings, possibly infinite,
-  with a limited computational resources
+  with limited computational resources,
   it is necessary to split the recordings into smaller chunks.
 For that purpose CloudASR uses voice activity detector implemented in \textbf{Theano} \cite{bergstra2010theano} to detect silences in a speech.
 
 
 \section{Frontend}
-Frontend uses several well-known open-source libraries, namely,
+The frontend uses several well-known open-source libraries, namely,
   \textbf{Twitter Bootstrap}\footnote{\url{http://getbootstrap.com/2.3.2/}} for CSS styling of the web,
   \textbf{jQuery}\footnote{\url{https://jquery.com/}}
   and \textbf{Angular.js}\footnote{\url{https://angularjs.org/}} for interactive elements on the web.
@@ -164,9 +163,9 @@ Frontend uses several well-known open-source libraries, namely,
   \label{fig:demo}
 \end{figure}
 
-Modern web browsers supports \textbf{WebAudio API}\footnote{\url{http://webaudio.github.io/web-audio-api/}},
+Modern web browsers support \textbf{WebAudio API}\footnote{\url{http://webaudio.github.io/web-audio-api/}},
   which is a high-level JavaScript API for processing and synthesizing audio in web applications.
-One of the things that can be done with this API is recording of an audio.
+One of the things that can be done with this API is audio recording.
 Thus, it is possible to create a web demo for the CloudASR online mode.
 The demo is based on \textbf{Recorder.js}\footnote{\url{https://github.com/mattdiamond/Recorderjs}} library,
   which can record output of WebAudio API and return it as a PCM chunks.
