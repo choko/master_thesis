@@ -1,4 +1,12 @@
-\chapter{Automatic Speech Recognition}
+\chapter{Theoretical Background}
+This chapter describes theory needed for the CloudASR platform.
+It starts with \textbf{Automatic Speech Recognition} section,
+  which introduces concepts such as acoustic models, language models or speech decoding.
+Then, sections \textbf{Open-Source ASR Tools} and \textbf{Public ASR services} present technologies related to CloudASR.
+Finally, this chapter ends with \textbf{Obtaining Manual Transcriptions} section,
+  which shows how manual transcriptions can be obtained with crowd--sourcing.
+
+\section{Automatic Speech Recognition}
 The task of the automatic speech recognition system is to "pick the most likely word sequence $\widehat{W}$
   given the observed acoustic evidence A" \cite{frederick1997statistical}.
 Therefore, speech recognition can be described as a following formula:
@@ -23,22 +31,19 @@ Since the numerator P(A) is constant regarding the maximization,
   \widehat{W} = \arg \max_{W} P(A|W) P(W)
 \end{equation}
 
-The probability $P(A|W)$ is called acoustic model and the probability $P(W)$ is called language model.
+Then, the probability $P(A|W)$ is called acoustic model and the probability $P(W)$ is called language model.
 In the sections \textbf{Acoustic Models} and \textbf{Language Models} computation of these probabilities will be described in more detail.
-After that, \textbf{Decoding} section will describe how the Formula~\ref{eq:asr} is used to find the desired word sequence.
-Then, sections \textbf{Open-Source ASR Tools} and \textbf{Public ASR services} will present technologies related to CloudASR.
-This chapter ends with \textbf{Obtaining Manual Transcriptions} section,
-  which describes how manual transcriptions can be obtained with crowd--sourcing.
+After that, \textbf{Speech Decoding} section will describe how the Formula~\ref{eq:asr} is used to find the desired word sequence.
 
 
-\section{Acoustic Models}
+\subsection{Acoustic Models}
 \BLIND
 \BLIND
 
 Baum--Welch \cite{welch2003hidden}
 Viterbi training \cite{franzini1990connectionist}
 
-\section{Language Models}
+\subsection{Language Models}
 The task of the language model $P(W)$ in speech recognition is
   to determine how likely are the sequences of words $w_1,\dots,w_m$ that sound alike
   by assigning a probability to each sequence.
@@ -83,13 +88,8 @@ Recently, artificial neural networks have been also successfully used to tackle 
 For instance, the recurrent neural network based language models yielded state-of-the-art results in terms of WER in speech recognition \cite{mikolov2010recurrent}.
 
 
-\section{Decoding}
+\subsection{Speech Decoding}
 \BLIND
-
-\textbf{Batch Decoding}
-\BLIND
-
-\textbf{Online Decoding}
 \BLIND
 
 
