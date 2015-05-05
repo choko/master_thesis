@@ -38,6 +38,7 @@
 \usepackage{verbatim}
 \usepackage{color}
 \usepackage{graphicx}
+\usepackage{amsmath}
 \usepackage{todonotes}
 \newcommand{\BLIND}[0]{{\color{red}\blindtext}}
 \newcommand{\TODO}[1]{\smallskip\todo[inline,color=red!30,size=\footnotesize]{\sf \textbf{TODO:} #1}}
@@ -158,6 +159,9 @@ Prague 2015
 \noindent
 Dedication.
 
+Access to computing and storage facilities owned by parties and projects contributing to the National Grid Infrastructure MetaCentrum,
+  provided under the programme "Projects of Large Infrastructure for Research, Development, and Innovations" (LM2010005), is greatly appreciated.
+
 \newpage
 
 %%% Strana s čestným prohlášením k diplomové práci
@@ -207,9 +211,21 @@ Mgr. Ing. Filip Jurčíček Ph.D., Ústav formální a aplikované lingvistiky
 % dle Organizační struktury MFF UK, případně plný název pracoviště mimo MFF UK
 
 Abstrakt:
+Tato diplomová práce představuje clodovou platformu pro automatické rozpoznávání řeči, CloudASR,
+  která je postavena na systému pro rozpoznávání řeči Kaldi.
+Platforma podporuje dávkový a online způsob rozpoznávání řeči
+  a také obsahuje anotační prostředí pro přidávání přepisů k odeslaným nahrávkám.
+Mezi klíčové vlastnosti této platformy patří škálovatelnost, přizpůsobitelnost a jednoduchý proces nasazení.
+Benchmarky ukazují,
+  že latence platformy je porovnatelná s latencí Google Speech API
+  a přesnost přepisů na omezených doménách může být dokonce lepší.
+Dále benchmarky ukazují,
+  že je platforma schopná zpracovat více než 1000 paralelních dotazů,
+  pokud má dostatek výpočetních zdrojů.
 % abstrakt v rozsahu 80-200 slov; nejedná se však o opis zadání diplomové práce
 
 Klíčová slova:
+cloud, Kaldi, ASR
 % 3 až 5 klíčových slov
 
 \vss}\nobreak\vbox to 0.49\vsize{
@@ -239,7 +255,7 @@ The platform supports both batch and online speech recognition mode
 The key features of the platform are scalability, customizability and easy deployment.
 Benchmarks of the platform show
   that the platform achieves comparable performance with Google Speech API in terms of latency
-  and it can achieve better accuracy on limitted domains.
+  and it can achieve better accuracy on limited domains.
 Furthermore, the benchmarks show that the platform is able to handle more than 1000 parallel requests given enough computational resources.
 
 
@@ -287,7 +303,15 @@ cloud, Kaldi, ASR
 %%% Přílohy k diplomové práci, existují-li (různé dodatky jako výpisy programů,
 %%% diagramy apod.). Každá příloha musí být alespoň jednou odkazována z vlastního
 %%% textu práce. Přílohy se číslují.
-\chapwithtoc{Attachments}
+
+\appendix
+\chapter{CD Content}
+
+%\chapter{Documentation}
+%\section{Installation}
+%\section{Deployment}
+%\section{Testing}
+
 
 \openright
 \end{document}
