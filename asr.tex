@@ -1,7 +1,8 @@
 \chapter{Theoretical Background}
 This chapter describes theory needed for the CloudASR platform.
-It starts with \textbf{Automatic Speech Recognition} section,
-  which introduces concepts such as acoustic models, language models or speech decoding.
+It starts with \textbf{Automatic Speech Recognition (ASR)} section,
+  which introduces concepts such as acoustic models, language models, speech decoding or evaluation of ASR systems.
+After that, \textbf{Voice Activity Detection} is described.
 Then, sections \textbf{Open-Source ASR Tools} and \textbf{Public ASR services} present technologies related to CloudASR.
 Finally, this chapter ends with \textbf{Obtaining Manual Transcriptions} section,
   which shows how manual transcriptions can be obtained with crowd--sourcing.
@@ -37,11 +38,32 @@ After that, \textbf{Speech Decoding} section will describe how the Formula~\ref{
 
 
 \subsection{Acoustic Models}
-\BLIND
-\BLIND
+The role of acoustic models $P(A|W)$ is to capture all acoustic conditions,
+  such as pronounciation, background noise, reverberation or transmission channel conditions,
+  for all possible pairings of W and A.
+Traditionally, Hidden Markov Models (HMM) are used for acoustic modelling,
+  but there are also other approaches based on aritificial neural networks \cite{lippmann1989review} or on dynamic time warping \cite{rabiner1981isolated}.
 
-Baum--Welch \cite{welch2003hidden}
-Viterbi training \cite{franzini1990connectionist}
+%Structure of HMM
+The acoustic model for a word sequence is a concatenation of HMM models for the individual words,
+  which belong to the recognized vocabulary.
+These smaller models are built from the smaller HMMs for the basic building blocks of the acoustic model systems - phonemes.
+
+%Training of HMM
+Training of the acoustic models, as described in \cite{frederick1997statistical}, consists of several steps.
+First, pronunciation, made up of the phonetic alphabet $\phi$, of each word in the vocabulary is added to the phonetic dictionary.
+Note, that some words may have several pronunciations,
+  then every valid pronunciation has to be added to the phonetic dictionary.
+Second, an elementary HMM is created for each symbol of the phonetic alphaber $\phi$.
+Third, for each word in the vocabulary a HMM is created as concatenation of elementary HMMs according to the word pronunciation.
+After that, these HMMs are concatenated with elementary HMMs corresponding to silence and/or end of words symbols to make a composite model for a transcription of some words sequence.
+Finally, these HMMs are trained with Baum--Welch \cite{welch2003hidden} algorithm,
+  which is a variation of EM algorithm \cite{dempster1977maximum},
+  on recordings with theirs transcriptions.
+
+Another way to train HMMs is to used Viterbi training algorithm \cite{franzini1990connectionist},
+  which approximates EM algorithm by choosing single best alignment and maximizing the posterior probability for the chosen alignment.
+Furthermore, latest work shows that Viterbi training achieves the same performance as Baum-Welch algorithm with much less computational resources \cite{rodriguez2003comparative}.
 
 \subsection{Language Models}
 The task of the language model $P(W)$ in speech recognition is
