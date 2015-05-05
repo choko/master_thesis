@@ -111,10 +111,22 @@ For instance, the recurrent neural network based language models yielded state-o
 
 
 \subsection{Speech Decoding}
+Speech decoding is used to find the most likely word sequence $\widehat{W}$ using the Equation~\ref{eq:asr}.
+Because the space of all word sequences is astronomically large, the search cannot be done by brute force.
 
+One of the algorithm that can be used for speech decoding is Viterbi algorithm \cite{forney1973viterbi}.
+It is a dynamic programming algorithm for finding the most likely sequence of hidden states in HMMs.
+Even though it is not guaranteed that this algorithm will find the most likely word sequence $\widehat{W}$,
+  it achieves very good results.
 
-\BLIND
-\BLIND
+Viterbi algorithm has a problem with large vocabularies,
+  because the resulting HMM has just too many states.
+As a result, states have to be pruned.
+There are several ways how to do that \cite{jang2002optimization}.
+First, only top n states with the highest probabilities are kept.
+Second, only states with probability higher than the treshold from the maximal state probability of this frame are kept.
+Or a combination of these two methods can be used.
+
 
 \subsection{Evaluation}
 \textbf{Word error rate (WER)} is the most common metric used to evaluate the performance of ASR systems.
@@ -144,7 +156,7 @@ Latency is a delay between the end of the recording and the end of the recogniti
 \section{Voice Activity Detection}
 Voice Activity Detection (VAD) is a technique used to detect presence or absence of human speech in the recording.
 There are several ways how to implement VAD,
-  for example, support vector machines \cite{mesgarani2006discrimination}, gaussian mixture models \cite{ng2012developing} or deep neural networks \cite{ryant2013speech} can be used.
+  for example, support vector machines \cite{mesgarani2006discrimination}, gaussian mixture models \cite{ng2012developing} or deep neural networks (DNN) \cite{ryant2013speech} can be used.
 The last one, using deep neural networks, will be described here.
 
 The VAD using deep neural networks starts by extracting features every 10ms from a 25 ms analysis window.
