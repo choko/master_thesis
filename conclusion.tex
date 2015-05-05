@@ -12,9 +12,9 @@ In the following sections all achievements are summarized and
 \section*{Cloud platform for ASR}
 The first goal of this thesis was to develop a cloud platform for ASR, CloudASR,
   that would provide API for batch speech recognition mode of the submitted wave files.
-This API is similiar to Google Speech API,
+This API is similar to Google Speech API,
   which enables users to switch to CloudASR seamlessly.
-In additition to that CloudASR provides an API for online speech recognition mode.
+In addition to that CloudASR provides an API for online speech recognition mode.
 The CloudASR comes with a web demo,
   where the users can try out the online speech recognition mode with various languages.
 Furthermore, the platform is scalable, customizable and easily deployable.
@@ -22,7 +22,7 @@ Furthermore, the platform is scalable, customizable and easily deployable.
 
 In terms of scalability,
   the platform is able to run both on single-machine and multi-machine setup
-  and it allows to scale number of running workers according to users needs.
+  and it allows to scale number of running workers according to users' needs.
 Additionally, the platform can run several API instances and load-balance between them.
 The benchmarks show that the platform is able to handle more than 1000 parallel requests
   given enough computational resources.
@@ -44,12 +44,10 @@ The second goal of this thesis was to create an annotation interface for annotat
 Its responsibility is to collect and store obtained recordings together with their transcriptions.
 Then users can rate transcriptions of the recordings
   or they can add their own transcriptions
-  if they think that none transcription is correct.
+  if they think that none is correct.
 The annotation interface allows administrators to choose golden transcription from several manual transcriptions
   that were obtained for the recording.
 Additionally CloudASR also supports addition of manual transcriptions via external job at CrowdFlower.
-
-\IDEA{Mention benefits of the thesis}
 
 \section*{Future work}
 \begin{itemize}

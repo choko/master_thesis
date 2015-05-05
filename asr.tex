@@ -39,10 +39,10 @@ After that, \textbf{Speech Decoding} section will describe how the Formula~\ref{
 
 \subsection{Acoustic Models}
 The role of acoustic models $P(A|W)$ is to capture all acoustic conditions,
-  such as pronounciation, background noise, reverberation or transmission channel conditions,
+  such as pronunciation, background noise, reverberation or transmission channel conditions,
   for all possible pairings of W and A.
 Traditionally, Hidden Markov Models (HMM) are used for acoustic modelling,
-  but there are also other approaches based on aritificial neural networks \cite{lippmann1989review} or on dynamic time warping \cite{rabiner1981isolated}.
+  but there are also other approaches based on artificial neural networks \cite{lippmann1989review} or on dynamic time warping \cite{rabiner1981isolated}.
 
 %Structure of HMM
 The acoustic model for a word sequence is a concatenation of HMM models for the individual words,
@@ -54,7 +54,7 @@ Training of the acoustic models, as described in \cite{frederick1997statistical}
 First, pronunciation, made up of the phonetic alphabet $\phi$, of each word in the vocabulary is added to the phonetic dictionary.
 Note, that some words may have several pronunciations,
   then every valid pronunciation has to be added to the phonetic dictionary.
-Second, an elementary HMM is created for each symbol of the phonetic alphaber $\phi$.
+Second, an elementary HMM is created for each symbol of the phonetic alphabet $\phi$.
 Third, for each word in the vocabulary a HMM is created as concatenation of elementary HMMs according to the word pronunciation.
 After that, these HMMs are concatenated with elementary HMMs corresponding to silence and/or end of words symbols to make a composite model for a transcription of some words sequence.
 Finally, these HMMs are trained with Baum--Welch \cite{welch2003hidden} algorithm,
@@ -124,7 +124,7 @@ Viterbi algorithm has a problem with large vocabularies,
 As a result, states have to be pruned.
 There are several ways how to do that \cite{jang2002optimization}.
 First, only top n states with the highest probabilities are kept.
-Second, only states with probability higher than the treshold from the maximal state probability of this frame are kept.
+Second, only states with probability higher than the threshold from the maximal state probability of this frame are kept.
 Or a combination of these two methods can be used.
 
 
@@ -140,7 +140,7 @@ where:
 \begin{itemize}
   \item S is the number of substitutions,
   \item D is the number of deletions,
-  \item I is the number od insertions,
+  \item I is the number of insertions,
   \item N is the number of words in reference
 \end{itemize}
 
@@ -163,7 +163,7 @@ The VAD using deep neural networks starts by extracting features every 10ms from
 These features are then normalized and concatenated to a feature vector,
   which is used as an input to the DNN.
 The DNN then returns the posterior probability of speech being present in the analysis windows.
-This posterior probability is compared with a treshold,
+This posterior probability is compared with a threshold,
   that is chosen so that false alarm and miss rates are equal on the test set,
   in order to yield decision whether the analysis window contains speech/non-speech.
 
@@ -254,7 +254,7 @@ But a manual transcription of the recordings by professional transcribers is exp
 Furthermore, it is difficult to find enough professional transcribers to transcribe the required amount of speech data in short time.
 
 Recently, it was shown that crowd-sourcing can be used for cheap, fast and good enough manual transcription of speech data \cite{novotney2010cheap}.
-With crowd-sourcing, speech data is splitted into small chunks that are then transcribed by several non-professional transcribers.
+With crowd-sourcing, speech data is split into small chunks that are then transcribed by several non-professional transcribers.
 Their transcriptions are then used to select the best transcription for the recording, for example with ROVER algorithm \cite{marge2010using}, and used for training of new ASR systems.
 Also, transcriptions from non-professional transcribers are only $6\%$ worse than professional transcriptions
   and they cost only $\frac{1}{30}$ of the cost of professional transcription.

@@ -1,4 +1,4 @@
-\chapter{Solution}
+\chapter{Implementation}
 This chapter describes the implementation of the CloudASR platform.
 The platform provides API for both batch and online speech recognition mode
   and it has an annotation interface for adding transcriptions to submitted recordings.
@@ -15,7 +15,7 @@ The implementation was also affected by the following requirements:
     \textbf{Easy deployment} -
       complex systems as CloudASR is have many dependencies and a difficult deployment process,
         which makes their maintenance hard.
-      CloudASR should have as few dependencies as possible and an one command deployment.
+      CloudASR should have as few dependencies as possible and one command deployment.
 
   \item
     \textbf{Customizability} -
@@ -31,13 +31,13 @@ The implementation was also affected by the following requirements:
 \section{Architecture}
 In order to meet the aforementioned scalability requirement
   the platform had to be designed from the very beginning to be able to run on many machines.
-As a result, the architecture consits of several nodes
+As a result, the architecture consists of several nodes
   that communicate with each other by sending messages over ZeroMQ sockets
   (each node acts as an actor as described in \cite{hewitt1977viewing}).
 
 The architecture was also affected by the fact
-  that it is not possible start to an ASR system when the user sends a request,
-  because the ASR systems need some time to load decoding graphs in memory,
+  that it is not possible to start an ASR system when the user sends a request,
+  because the ASR systems need some time to load decoding graphs in the memory,
   which would add some unnecessary latency.
 To solve this problem the platform uses Master-Worker architecture,
   which also makes it possible to handle requests for various languages at the same time.
@@ -57,7 +57,7 @@ In the following section each node will be described in detail.
     The client requests are handled by \textbf{API} which communicates with Master and Workers.
     The processed recordings are sent to \textbf{Saver} which saves them and serves them via HTTP.
     An annotation interface and an online demo are hosted by \textbf{Web}.
-    Finally, there are also two externals nodes \textbf{HAProxy}
+    Finally, there are also two external nodes: \textbf{HAProxy}
       which load-balances requests between particular application instances
       and \textbf{DB} which stores information about processed recordings.
   }
@@ -70,16 +70,16 @@ The main task of Master is to keep track about running workers and to schedule t
 In order to be able to handle requests for various languages
   Master monitors state of each worker
   and it has a queue of waiting workers for each language,
-    so that when API asks for a worker Master cna return an address of an available worker.
+    so that when API asks for a worker Master can return an address of an available worker.
 
 The workers can be in four different states:
   \textbf{started}, \textbf{waiting}, \textbf{working} and \textbf{not responding}
   and they send four different heartbeats, small messages with an information about their state, to Master:
   \textbf{started}, \textbf{waiting}, \textbf{working} and \textbf{finished}.
 
-The lifecycle of the worker as described in Figure~\ref{fig:worker-state} starts in in the \textbf{started} state,
+The life cycle of the worker as described in Figure~\ref{fig:worker-state} starts in the \textbf{started} state,
   after that it moves to the \textbf{waiting} state by sending the \textbf{waiting} heartbeat.
-The worker remains in the waiting state until \textbf{Master assings a tasks} to it,
+The worker remains in the waiting state until \textbf{Master assigns a tasks} to it,
   then it moves to the \textbf{working} state
   where it remains as long as it is working.
 In the working state worker sends working heartbeats periodically,
@@ -91,7 +91,7 @@ Additionally, when a worker crashes during the processing of the task and it get
   it sends started heartbeat again,
   which informs Master, that the worker was restarted and it adds it to the queue again.
 When a worker does not send any heartbeat for 10 seconds,
-  the master set the worker state to \textbf{not responding}.
+  the master sets the worker state to \textbf{not responding}.
 But as soon as the worker sends any heartbeat,
   the master will set the worker to the appropriate state.
 
@@ -100,9 +100,9 @@ But as soon as the worker sends any heartbeat,
   \includegraphics[width=0.75\textwidth]{./img/worker-state.pdf}
 
   \caption{
-    The lifecycle of the worker starts in in the \textbf{started} state,
+    The life cycle of the worker starts in in the \textbf{started} state,
       after that it moves to the \textbf{waiting} state by sending the \textbf{waiting} heartbeat.
-    The worker remains in the waiting state until \textbf{Master assings a tasks} to it,
+    The worker remains in the waiting state until \textbf{Master assigns a tasks} to it,
       then it moves to the \textbf{working} state
       where it remains as long as it is working.
     In the working state worker sends working heartbeats periodically,
@@ -122,19 +122,19 @@ But as soon as Master starts working the platform should be available again.
 \subsection{Worker}
 Worker acts as a wrapper for an ASR system.
 By default Pykaldi is used but any other ASR system can be used
-  if the users implement a python wrapper for that system.
+  if the user implements a python wrapper for that system.
 Because CloudASR should be able to process very long recordings in the online speech recognition mode,
-  it is neccessary to split the recordings into smaller chunks
-  that can be processed with limitted computational resources.
+  it is necessary to split the recordings into smaller chunks
+  that can be processed with limited computational resources.
 For that purpose VAD component from Alex Statistical Dialogue Systems Framework \cite{jurcicek2014alex} is used to detect silence in a speech,
-  because the speech can be splitted at that point without any large negative effect on the accuracy of the transcriptions.
+  because the speech can be split at that point without any large negative effect on the accuracy of the transcriptions.
 
 
 \subsection{API}
 The main task of API is to forward requests from the clients to the workers.
 When API receives a request from a client,
-  it sends a message to Master with a request for a worker address for the given language,
-  if there is any available worker, Master returns is address,
+  it sends a message to Master with a request for a worker address for the given language.
+If there is any available worker, Master returns its address,
   otherwise Master returns an error which is forwarded back to the client.
 Then API sends the submitted recording to the worker,
   which processes it
@@ -165,17 +165,17 @@ It has two modes, namely, dictation mode, which only shows the best transcriptio
 
 Even though the annotation interface allows anonymous users to add transcriptions to recordings,
   the users are encouraged to log in via their Google Account,
-  because than it is be possible to track their transcriptions
+  because then it is possible to track their transcriptions
     and make useful insights about the quality of their transcriptions.
 
 The annotation interface distinguishes between two types of user roles: users and administrators.
 Normal users are only allowed to add transcriptions (See Figure~\ref{fig:annotation-interface}) to the recordings selected by CloudASR,
-  but administrators can browse all recordings with their transcriptions.
+  but administrators can view every recording with its transcriptions.
 
-In order to get the most of the normal users transcriptions
+In order to get the most of the normal user transcriptions,
   a recording, which should be transcribed by the user,
   is selected randomly from all recordings for the given language with confidence lower than 0.8,
-    because it is not necessary to transcribe almost correct transcriptions.
+    because it is not necessary to transcribe recordings with correct transcriptions.
 This allows to collect transcriptions for all recordings uniformly
   and then it is up to the administrator to decide which transcription is the best.
 
@@ -193,22 +193,21 @@ This allows to collect transcriptions for all recordings uniformly
 The main task of the Recordings saver is to save and serve recordings processed by workers.
 When the worker finishes recognition
   it sends the recording with its n-best hypotheses to the Recording saver via ZeroMQ socket.
-The saver saves the wave file to the filesystem
-  and it save the n-best hypotheses to the database so that they can be used in the future.
+The saver saves the wave file to the file system
+  and it saves the n-best hypotheses to the database so that they can be used in the future.
 
 
 \section{Scalability}
 As mentioned before, one of the key requirements for the CloudASR platform was scalability.
 To successfully fulfill this requirement architecture was split into smaller nodes,
-  which communicates which each other by sending messages over ZeroMQ sockets.
+  which communicate which each other by sending messages over ZeroMQ sockets.
 This enables the platform to run on several machines.
 Additionally, the heartbeating makes it possible to scale workers dynamically without need to stop the platform.
 Finally, load-balancing allows to run several API nodes and spread the load between.
-Yet, this solution is limitted by the network capacity,
+Yet, this solution is limited by the network capacity,
   but it is possible to deploy the CloudASR to a different data center
   and load balance between data centers.
 This makes the CloudASR platform almost infinitely scalable.
-\IDEA{Move to conclusion?}
 
 
 \section{Deployment}
@@ -222,7 +221,7 @@ In this file they can specify names of Docker images for the workers,
   number of instances of these workers
   and a model name with which the worker will be available for speech recognition.
 Also, users have to specify runtime variables such as IP address of a slave where the Master should run,
-  mysql connection string and
+  MySQL connection string and
   a domain name that HAProxy will use to route requests to the running platform.
 Finally, users have to specify credentials for Marathon if they want to run the platform on a Mesos cluster.
 After that they can run CloudASR locally with \texttt{make run\_locally} command
@@ -233,7 +232,7 @@ After that they can run CloudASR locally with \texttt{make run\_locally} command
 
   \caption{
      An example of the CloudASR configuration \texttt{deployment/cloudasr.json}
-       that specifies to run 5 cs-alex workers and 5 en-towninfo workers
+       that specifies how to run 5 cs-alex workers and 5 en-towninfo workers
        using respective Docker image.
      With this configuration file the CloudASR platform can be run locally with command \texttt{make run\_locally}
        or on a Mesos cluster with command \texttt{make run\_on\_mesos}.
@@ -242,19 +241,18 @@ After that they can run CloudASR locally with \texttt{make run\_locally} command
 \end{figure}
 
 
-\subsection{Contiunous Integration \& Continuous Delivery}
 In order to ensure quality and stability of the CloudASR platform,
   two practises were used during the development:
-  Continuous Integration \cite{fowler2006continuous} and Continuous Delivery \cite{humble2010continuous}.
-The goal of these practises is to built, test and deploy the CloudASR platform as often as possible,
-  to get a feedback from real usage.
+  \textbf{Continuous Integration} \cite{fowler2006continuous} and \textbf{Continuous Delivery} \cite{humble2010continuous}.
+The goal of these practises is to build, test and deploy the CloudASR platform as often as possible,
+  to get a feedback from the real usage.
 To achieve that the CloudASR platform uses Jenkins-CI server,
   that watches the CloudASR git repository
   and on every push to the repository it builds Docker images,
   tests the code
   and push the built Docker images to the Docker Registry.
 After that it is possible to deploy the CloudASR platform with a specific version
-  and it is also possible to switch back to older versions when anything goes wrong.
+  and it is also possible to switch back to the older versions when anything goes wrong.
 To minimize failures CloudASR is deployed first to the development environment,
   where the users can test it
   and then it can be deployed to the production environment.
@@ -270,9 +268,9 @@ Usage of these patterns together with message oriented architecture made it poss
 A typical unit test structure of the CloudASR platform node looks like a test in Figure~\ref{fig:unit-test}.
 
 In addition to unit tests there are also integration tests,
-  which test the factory methods that create production ready nodes,
+  that test the factory methods that create production ready nodes,
   and end-to-end tests,
-  which test that both batch and online recognition mode requests are handled correctly.
+  that test that both batch and online recognition mode requests are handled correctly.
 This test suite ensures that developers do not break anything
   and it also gives them confidence to change the code without fear.
 
@@ -287,7 +285,7 @@ This test suite ensures that developers do not break anything
 \section{Customizability}
 The second requirement for CloudASR is customizability in terms of acoustic and language models.
 The platform supports a creation of new workers with various acoustic and language models and
-  it also supports a creation of new workers with arbitrary ARS systems.
+  it also supports a creation of new workers with arbitrary ASR systems.
 An overview on the customization process is described in the following section.
 
 
@@ -327,14 +325,14 @@ After that users can use the new worker in their application in the similar way 
 
 \subsection{Worker with Arbitrary ASR System}
 Even though CloudASR supports only Kaldi out of the box, other ASR systems can be used too.
-Again, the only thing that the users has to do is to create a worker docker image with their ASR system.
+Again, the only thing that the users have to do is to create a worker docker image with their ASR system.
 The only step that differs from the previous process is
   that the users have to implement and add to the Dockerfile a script \texttt{asr.py} with their own \texttt{create\_asr} method
   that returns \texttt{ASR} class with these methods:
 
 \begin{itemize}
   \item
-    \texttt{reset()} - this method is called after every requests
+    \texttt{reset()} - this method is called after every request
       and it can be used to reset the underlying ASR system.
 
   \item
@@ -343,13 +341,13 @@ The only step that differs from the previous process is
         and it should return an interim hypothesis in form of a tuple \texttt{(confidence, transcript)}.
 
   \item
-    \texttt{get\_final\_hypothesis} - this method is called at the end of every requests,
+    \texttt{get\_final\_hypothesis} - this method is called at the end of every request,
       it should return a list of n-best hypotheses in form of a tuple \texttt{(confidence, transcript)}.
 
 \end{itemize}
 
-The creation of such a script is illustrated on Figure~\ref{fig:dummyasr} on the DummyASR class,
-  which will be also used for benchmark purposes in the Chapter~\ref{chapter:evaluation}.
+The creation of such a script is illustrated in Figure~\ref{fig:dummyasr} on the DummyASR class,
+  which will aslo be used for benchmark purposes in the Chapter~\ref{chapter:evaluation}.
 
 \begin{figure}[h]
   \verbatiminput{snippets/dummy_asr.py}
@@ -367,11 +365,11 @@ If the users want to use these workers on multiple machines, they have to push t
 
 
 \section{Example of API Usage}
-The CloudASR platform supports both batch and online speech recogntion.
-In the batch mode users sends wave files to the API using HTTP POST request
-  and they receive a json with a n-best transcriptions.
+The CloudASR platform supports both batch and online speech recognition.
+In the batch mode users send wave files to the API using HTTP POST request
+  and they receive a json with n-best transcriptions.
 Users can specify which worker they want to use in \texttt{lang} parameter.
-The batch mode has a similiar interface to Google Speech API,
+The batch mode has a similar interface to Google Speech API,
   which enables users to switch to CloudASR seamlessly.
 An example of batch recognition API usage is illustrated on a simple curl command in Figure~\ref{fig:curl}
   and a response from the API is shown in Figure~\ref{fig:curl-response}.
@@ -386,17 +384,17 @@ An example of batch recognition API usage is illustrated on a simple curl comman
 \begin{figure}[h]
   \verbatiminput{snippets/curl.json}
 
-  \caption{An example response of batch recognition mode.}
+  \caption{An example of batch recognition mode response.}
   \label{fig:curl-response}
 \end{figure}
 
-In contrast to batch mode in online mode users sends PCM chunks of a recording while the recording is recorder.
+In contrast to batch mode in online mode users send PCM chunks of a recording while the recording is being recorder.
 Users can send these chunks as often as they want
   but it is advised to send a chunk four times per second
   to achieve a smooth experience.
-Chunks are sent to the server via Socket.IO technology encoded as a JSON messages.
+Chunks are sent to the server via Socket.IO technology encoded as JSON messages.
 Because JSON does not support encoding of a binary data,
-  it is neccessary to encode PCM chunks into a string.
+  it is necessary to encode PCM chunks into a string.
 Base64 proved itself to be a sensible compromise between the message size increase
   and the implementation complexity.
 The CloudASR platform comes with a JavaScript library for online speech recognition mode.

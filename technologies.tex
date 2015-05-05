@@ -4,9 +4,9 @@ Also the motivation for the usage of these technologies will be explained.
 
 \section{Platform}
 In the following section technologies that were used to build a cloud platform will be described.
-These technologies made possible to build a scalable solution with an easy deployment.
+These technologies have made it possible to build a scalable solution with an easy deployment.
 
-Traditionally, a deployment of a such a complex system as CloudASR is consists of several steps
+Traditionally, a deployment of a such a complex system as CloudASR consists of several steps
   during which necessary dependencies are installed,
   the application environment is set up
   and finally the application is started.
@@ -17,19 +17,19 @@ The ultimate goal for the CloudASR deployment was the exact opposite: fast and r
 The most important tool used during development was \textbf{Docker} \cite{merkel2014docker}
   -- a portable, lightweight application runtime and packaging tool.
 It allows to specify dependencies and environmental variables for a process
-  and it allows to build a image from this specification called Dockerfile,
-  see Figure~\ref{fig:dockerfile} for an example.
+  and it allows to build an image from this specification called Dockerfile,
+  see Figure~\ref{fig:dockerfile} for example.
 Once this image is built it can be used on any machine with Docker installed,
   which makes the deployment fast and replicable,
-  because it is not neccessary to install all dependencies on every machine.
-Additionally, the usage of Docker images removes bugs caused by different versions of libraries used in development and production environmnent
+  because it is not necessary to install all dependencies on every machine.
+Additionally, the usage of Docker images removes bugs caused by different versions of libraries used in development and production environment
   because developers use the same images in both environments.
 
 \begin{figure}[h]
   \verbatiminput{snippets/Dockerfile}
 
   \caption{
-    An example of Dockerfile that creates an image from the base ubuntu image,
+    An example of Dockerfile that creates an image from the base Ubuntu image,
       installs python,
       copies all files in the Dockerfile folder
       and sets command python run.py to be run,
@@ -68,16 +68,16 @@ Since the traffic of CloudASR platform can be very large,
   it is not possible to process all HTTP requests by one application server.
 Therefore, there must be a load-balancer to distribute workload between application servers.
 CloudASR platform uses \textbf{HAProxy}\footnote{\url{http://www.haproxy.org/}} load-balancer,
-  but any other load-balancers can also used with appropriate setup.
+  but any other load-balancers can also be used with appropriate setup.
 
 
 
-\section{Continuos Integration \& Delivery}
+\section{Continuous Integration \& Delivery}
 During development of CloudASR several practises were obeyed,
   namely Continuous Integration and Continuous Delivery.
 In order to be able to do that a platform which consisted of \textbf{Jenkins-CI}\footnote{\url{https://jenkins-ci.org/}} and \textbf{Docker Registry}\footnote{\url{https://github.com/docker/docker-registry}} had to be deployed.
 
-The most important tool for Continous Integration \& Delivery of CloudASR is Jenkins-CI.
+The most important tool for Continuous Integration \& Delivery of CloudASR is Jenkins-CI.
 Its task is to watch CloudASR git repository
   and whenever a new code is pushed into this repository it schedules a new build of the platform.
 During this build the most recent code is pulled from the repository and then the docker images are built.
@@ -101,13 +101,13 @@ As a database \textbf{MySQL}\footnote{\url{https://www.mysql.com/}} is used,
   because \textbf{SQLAlchemy}\footnote{\url{http://www.sqlalchemy.org/}} is used to access the database.
 
 CloudASR architecture consists of several nodes which need to communicate between each other.
-For this communication ClousASR uses \textbf{ZeroMQ}\footnote{\url{http://zeromq.org/}},
+For this communication CloudASR uses \textbf{ZeroMQ}\footnote{\url{http://zeromq.org/}},
   because of its simple design, high performance and support for every modern language.
 With ZeroMQ it is possible to create many messaging patterns,
   but CloudASR uses only two: request-reply and push-pull.
 In request-reply messaging pattern a sender sends a message and then waits for a reply,
   after that another sender can send next message and wait for a reply.
-Whereas in push-pull messaging pattern senders just send messages and do not wait for a reply.
+Whereas in push-pull messaging pattern senders just send messages and do not wait for replies.
 
 
 In order to be able to send complex messages via ZeroMQ sockets, messages have to be serialized.
@@ -144,7 +144,7 @@ CloudASR uses \textbf{Google Protocol Buffers}\footnote{\url{https://developers.
 \end{table}
 
 As an ASR toolkit CloudASR uses Python wrapper for the \textbf{Kaldi speech recognition toolkit} \cite{povey2011kaldi} called \textbf{Pykaldi} \cite{platek2014free}.
-Because CloudASR should be able to process very long recordings recordings, possibly infinite,
+Because CloudASR should be able to process very long recordings, possibly infinite,
   with a limited computational resources
   it is necessary to split the recordings into smaller chunks.
 For that purpose CloudASR uses voice activity detector implemented in \textbf{Theano} \cite{bergstra2010theano} to detect silences in a speech.
@@ -171,8 +171,8 @@ Thus, it is possible to create a web demo for the CloudASR online mode.
 The demo is based on \textbf{Recorder.js}\footnote{\url{https://github.com/mattdiamond/Recorderjs}} library,
   which can record output of WebAudio API and return it as a PCM chunks.
 
-Next step is to send these chunks to the API.
+The next step is to send these chunks to the API.
 Because the demo demonstrates the online speech recognition mode,
-  it is not possible to wait for whole recording to be recorded and then send it to the API via HTTP POST request,
-  thus, CloudASR uses \textbf{Socket.IO}\footnote{\url{http://socket.io/}} to send stream of chunks to the API
-  and to receieve stream of results from the API.
+  it is not possible to wait for the whole recording to be recorded and then send it to the API via HTTP POST request.
+Thus, CloudASR uses \textbf{Socket.IO}\footnote{\url{http://socket.io/}} to send stream of chunks to the API
+  and to receive stream of results from the API.
