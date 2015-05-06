@@ -52,18 +52,18 @@ These smaller models are built from the smaller HMMs for the basic building bloc
 %Training of HMM
 Training of the acoustic models, as described in \cite{frederick1997statistical}, consists of several steps.
 First, pronunciation, made up of the phonetic alphabet $\phi$, of each word in the vocabulary is added to the phonetic dictionary.
-Note, that some words may have several pronunciations,
+Note that some words may have several pronunciations,
   then every valid pronunciation has to be added to the phonetic dictionary.
 Second, an elementary HMM is created for each symbol of the phonetic alphabet $\phi$.
-Third, for each word in the vocabulary a HMM is created as concatenation of elementary HMMs according to the word pronunciation.
+Third, for each word in the vocabulary an HMM is created as concatenation of elementary HMMs according to the word pronunciation.
 After that, these HMMs are concatenated with elementary HMMs corresponding to silence and/or end of words symbols to make a composite model for a transcription of some words sequence.
 Finally, these HMMs are trained with Baum--Welch \cite{welch2003hidden} algorithm,
   which is a variation of EM algorithm \cite{dempster1977maximum},
   on recordings with theirs transcriptions.
 
-Another way to train HMMs is to used Viterbi training algorithm \cite{franzini1990connectionist},
+Another way to train HMMs is to use Viterbi training algorithm \cite{franzini1990connectionist},
   which approximates EM algorithm by choosing single best alignment and maximizing the posterior probability for the chosen alignment.
-Furthermore, latest work shows that Viterbi training achieves the same performance as Baum-Welch algorithm with much less computational resources \cite{rodriguez2003comparative}.
+Furthermore, latest works show that Viterbi training achieves the same performance as Baum-Welch algorithm with much less computational resources \cite{rodriguez2003comparative}.
 
 \subsection{Language Models}
 The task of the language model $P(W)$ in speech recognition is
@@ -76,7 +76,7 @@ Using the Bayes' rule, $P(W)$ can be seen as:
 \end{equation}
 
 Since the probability $P(w_i|w_1,\dots,w_{i-1})$ has just too many arguments
-  and the probability does not necessarily depends on the entire history,
+  and the probability does not necessarily depend on the entire history,
   the history is put into equivalence classes $\phi(w_1,\dots,w_{i-1})$.
 This results into the following formula:
 
@@ -93,7 +93,7 @@ Thus, the n-gram language model becomes:
   P(w_1,\dots,w_m) \approx \prod\limits_{i=1}^{m} P(w_i|w_{i-(n-1)},\dots,w_{i-1})
 \end{equation}
 
-Where the probabilities $P(w_i|w_{i-(n-1)},\dots,w_{w-1})$ are estimated from the relative frequencies of n-grams in the training data with the following formula:
+There the probabilities $P(w_i|w_{i-(n-1)},\dots,w_{w-1})$ are estimated from the relative frequencies of n-grams in the training data with the following formula:
 \begin{equation}
   \label{eq:2}
   P(w_i|w_{i-(n-1)},\dots,w_{i-1}) = \frac{c(w_{i-(n-1)},\dots,w_i)}{c(w_{i-(n-1)},\dots,w_{i-1})}
@@ -114,7 +114,7 @@ For instance, the recurrent neural network based language models yielded state-o
 Speech decoding is used to find the most likely word sequence $\widehat{W}$ using the Equation~\ref{eq:asr}.
 Because the space of all word sequences is astronomically large, the search cannot be done by brute force.
 
-One of the algorithm that can be used for speech decoding is Viterbi algorithm \cite{forney1973viterbi}.
+One of the algorithm that can be used for speech decoding is the Viterbi algorithm \cite{forney1973viterbi}.
 It is a dynamic programming algorithm for finding the most likely sequence of hidden states in HMMs.
 Even though it is not guaranteed that this algorithm will find the most likely word sequence $\widehat{W}$,
   it achieves very good results.
@@ -129,7 +129,7 @@ Or a combination of these two methods can be used.
 
 
 \subsection{Evaluation}
-\textbf{Word error rate (WER)} is the most common metric used to evaluate the performance of ASR systems.
+\textbf{Word error rate (WER)} is the most common metrics used to evaluate the performance of ASR systems.
 It is computed as a minimum edit distance on words between one-best ASR output and a reference transcription divided by the number of words in the reference transcription.
 
 \begin{equation}
@@ -146,7 +146,7 @@ where:
 
 Metrics that are used to evaluate speed of ASR systems are \textbf{Real Time Factor (RTF)} and \textbf{Latency}.
 RTF is computed as a time needed to process the recording R by the ASR system divided by the length of the recording R.
-Latency is a delay between the end of the recording and the end of the recognition.
+Latency is the delay between the end of the recording and the end of the recognition.
 
 \begin{equation}
   RTF = \frac{time(decode(R))}{length(R)}
@@ -164,7 +164,8 @@ These features are then normalized and concatenated to a feature vector,
   which is used as an input to the DNN.
 The DNN then returns the posterior probability of speech being present in the analysis windows.
 This posterior probability is compared with a threshold,
-  that is chosen so that false alarm and miss rates are equal on the test set,
+  that is chosen,
+  so that false alarm and miss rates are equal on the test set,
   in order to yield decision whether the analysis window contains speech/non-speech.
 
 \section{Open-Source ASR Tools}
@@ -176,10 +177,10 @@ HTK is a toolkit for building and manipulating hidden Markov models.
 It consists of a set of library modules and tools that provide sophisticated facilities for speech analysis, HMM training, testing and results analysis.
 Furthermore, it supports HMMs using both continuous density mixture Gaussians and discrete distributions and can be used to build complex HMM systems.
 
-The second toolkit is \textbf{Julius} \cite{lee2001julius}, high-performance large vocabulary speech recognition decoder,
+The second toolkit is \textbf{Julius} \cite{lee2001julius}, high-performance large vocabulary speech recognition decoder
   that can perform almost real-time decoding with 60k words in the vocabulary.
-It supports statistical n-gram language model and rule-based grammars,
-  as well as Hidden Markov Model (HMM) as an acoustic model
+It supports statistical n-gram language model and rule-based grammars.
+And it uses Hidden Markov Model (HMM) as an acoustic model
 Julius can be also used with models trained for HTK toolkit.
 
 Next described toolkit is \textbf{Kaldi} \cite{povey2011kaldi} -- a free, open-source toolkit for speech recognition written in C++.
@@ -199,7 +200,7 @@ It includes state of the art speech recognition technology for acoustic model tr
 Besides, its notable components are speaker adaptation,
   speaker adaptive training,
   unsupervised training,
-  a finite state automata library,
+  a finite state automata library
   and an efficient tree search decoder.
 
 
@@ -224,7 +225,7 @@ Additionally,
 \textbf{Nuance Dragon NaturallySpeaking}\footnote{\url{http://www.nuance.com/for-developers/dragon/index.htm}}
   is the second provider of the API for speech recognition.
 It provides software development kits for Windows and mobile applications.
-It also has a version that can be deployed on a server and used as a API for other applications.
+It also has a version that can be deployed on a server and used as an API for other applications.
 
 
 The last API provider that will be mentioned here is \textbf{wit.ai}\footnote{\url{https://wit.ai/}}.

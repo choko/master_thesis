@@ -15,7 +15,7 @@ The implementation was also affected by the following requirements:
     \textbf{Easy deployment} -
       complex systems as CloudASR is have many dependencies and a difficult deployment process,
         which makes their maintenance hard.
-      CloudASR should have as few dependencies as possible and one command deployment.
+      CloudASR should have as few dependencies as possible and only one command deployment.
 
   \item
     \textbf{Customizability} -
@@ -53,7 +53,7 @@ In the following section each node will be described in detail.
 
   \caption{
     An overview of the CloudASR architecture.
-    The most important node is \textbf{Master} to which \textbf{Workers} sends heartbeats with their state.
+    The most important node is \textbf{Master} to which \textbf{Workers} send heartbeats with their state.
     The client requests are handled by \textbf{API} which communicates with Master and Workers.
     The processed recordings are sent to \textbf{Saver} which saves them and serves them via HTTP.
     An annotation interface and an online demo are hosted by \textbf{Web}.
@@ -200,7 +200,7 @@ The saver saves the wave file to the file system
 \section{Scalability}
 As mentioned before, one of the key requirements for the CloudASR platform was scalability.
 To successfully fulfill this requirement architecture was split into smaller nodes,
-  which communicate which each other by sending messages over ZeroMQ sockets.
+  which communicate with each other by sending messages over ZeroMQ sockets.
 This enables the platform to run on several machines.
 Additionally, the heartbeating makes it possible to scale workers dynamically without need to stop the platform.
 Finally, load-balancing allows to run several API nodes and spread the load between.
@@ -245,12 +245,12 @@ In order to ensure quality and stability of the CloudASR platform,
   two practises were used during the development:
   \textbf{Continuous Integration} \cite{fowler2006continuous} and \textbf{Continuous Delivery} \cite{humble2010continuous}.
 The goal of these practises is to build, test and deploy the CloudASR platform as often as possible,
-  to get a feedback from the real usage.
-To achieve that the CloudASR platform uses Jenkins-CI server,
+  to get feedback from the real usage.
+To achieve that the CloudASR platform uses Jenkins-CI server
   that watches the CloudASR git repository
   and on every push to the repository it builds Docker images,
   tests the code
-  and push the built Docker images to the Docker Registry.
+  and pushes the built Docker images to the Docker Registry.
 After that it is possible to deploy the CloudASR platform with a specific version
   and it is also possible to switch back to the older versions when anything goes wrong.
 To minimize failures CloudASR is deployed first to the development environment,
@@ -258,7 +258,7 @@ To minimize failures CloudASR is deployed first to the development environment,
   and then it can be deployed to the production environment.
 
 
-To ensure a stability of CloudASR all crucial parts of the platform are covered with tests,
+To ensure stability of CloudASR all crucial parts of the platform are covered with tests,
   namely unit tests, integration tests and end-to-end tests.
 
 Each node was implemented with two main design patterns in mind, namely Dependency Injection \cite{fowler2004inversion} and Factory Method \cite{gamma1993design}.
@@ -268,9 +268,9 @@ Usage of these patterns together with message oriented architecture made it poss
 A typical unit test structure of the CloudASR platform node looks like a test in Figure~\ref{fig:unit-test}.
 
 In addition to unit tests there are also integration tests,
-  that test the factory methods that create production ready nodes,
+  which test the factory methods that create production ready nodes,
   and end-to-end tests,
-  that test that both batch and online recognition mode requests are handled correctly.
+  which test that both batch and online recognition mode requests are handled correctly.
 This test suite ensures that developers do not break anything
   and it also gives them confidence to change the code without fear.
 
@@ -284,8 +284,8 @@ This test suite ensures that developers do not break anything
 
 \section{Customizability}
 The second requirement for CloudASR is customizability in terms of acoustic and language models.
-The platform supports a creation of new workers with various acoustic and language models and
-  it also supports a creation of new workers with arbitrary ASR systems.
+The platform supports creating new workers with various acoustic and language models and
+  it also supports creating new workers with arbitrary ASR systems.
 An overview on the customization process is described in the following section.
 
 
@@ -338,16 +338,16 @@ The only step that differs from the previous process is
   \item
     \texttt{recognize\_chunk(pcm)} - this method is used to process small chunks of recordings.
       The method should accept pcm chunks with frame rate 16000
-        and it should return an interim hypothesis in form of a tuple \texttt{(confidence, transcript)}.
+        and it should return an interim hypothesis in the form of a tuple \texttt{(confidence, transcript)}.
 
   \item
     \texttt{get\_final\_hypothesis} - this method is called at the end of every request,
-      it should return a list of n-best hypotheses in form of a tuple \texttt{(confidence, transcript)}.
+      it should return a list of n-best hypotheses in the form of a tuple \texttt{(confidence, transcript)}.
 
 \end{itemize}
 
 The creation of such a script is illustrated in Figure~\ref{fig:dummyasr} on the DummyASR class,
-  which will aslo be used for benchmark purposes in the Chapter~\ref{chapter:evaluation}.
+  which will also be used for benchmark purposes in the Chapter~\ref{chapter:evaluation}.
 
 \begin{figure}[h]
   \verbatiminput{snippets/dummy_asr.py}
@@ -388,7 +388,7 @@ An example of batch recognition API usage is illustrated on a simple curl comman
   \label{fig:curl-response}
 \end{figure}
 
-In contrast to batch mode in online mode users send PCM chunks of a recording while the recording is being recorder.
+In contrast to batch mode in online mode users send PCM chunks of a recording while the recording is being recorded.
 Users can send these chunks as often as they want
   but it is advised to send a chunk four times per second
   to achieve a smooth experience.
