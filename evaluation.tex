@@ -59,7 +59,7 @@ Results, plotted in Figure~\ref{fig:online-benchmark}, show that
 Because the main bottleneck of the CloudASR platform is a number of running workers,
   workers with dummy ASR engine (described in Figure~\ref{fig:dummyasr}) were used to be able to test how many parallel requests can CloudASR handle.
 As a result, 1000 dummy workers could run on a Mesos cluster with 5 slaves (4CPU, 16GB RAM).
-Also, workload was spread across 5 frontend containers with a load-balancer.
+Also, workload was spread across 5 API containers with a load-balancer.
 
 \begin{figure}[h]
   \verbatiminput{snippets/benchmark.bash}

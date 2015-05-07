@@ -25,6 +25,8 @@ In this file, you can specify:
     "registry": "registry.hub.docker.io",
     "tag": "latest",
     "marathon_url": "http://127.0.0.1:8080",
+    "marathon_login": "<marathon login>",
+    "marathon_password": "<marathon password>",
     "master_ip": "127.0.0.1",
     "connection_string": "<mysql connection string>",
     "google_login_client_id": "<google login client id>",
@@ -116,7 +118,7 @@ Messages have following format:
 
 \begin{itemize}
   \item
-    First, you have to start recognition by sending information about used language.
+    First, you have to start the recognition by sending the information about the used language.
     \begin{verbatim}socketio.emit('begin', {'lang': 'en-GB'})\end{verbatim}
   \item
     After that, you can send PCM chunks to the server. Every chunk is a Base64 encoded 16 bit PCM string.
