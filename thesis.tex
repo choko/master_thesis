@@ -33,7 +33,6 @@
 \usepackage{amsthm}
 
 \usepackage[english]{babel}
-\usepackage{blindtext}
 \usepackage[labelfont={small,bf},textfont={small,it}]{caption}
 \usepackage{verbatim}
 \usepackage{color}
@@ -41,18 +40,6 @@
 \usepackage{amsmath}
 \usepackage{acronym}
 \usepackage{todonotes}
-\newcommand{\BLIND}[0]{{\color{red}\blindtext}}
-\newcommand{\TODO}[1]{\smallskip\todo[inline,color=red!30,size=\footnotesize]{\sf \textbf{TODO:} #1}}
-\newcommand{\IDEA}[1]{\smallskip\todo[inline,color=yellow!30,size=\footnotesize]{\sf \textbf{IDEA:} #1}}
-\newcommand{\TODOIMG}[2]{
-  \begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.95\textwidth]{./img/todo.pdf}
-
-    \caption{#2}
-    \label{#1}
-  \end{figure}
-}
 
 %% Balíček hyperref, kterým jdou vyrábět klikací odkazy v PDF,
 %% ale hlavně ho používáme k uložení metadat do PDF (včetně obsahu).
@@ -217,10 +204,10 @@ Abstrakt:
 Tato diplomová práce představuje cloudovou platformu pro automatické rozpoznávání řeči, CloudASR,
   která je postavena na systému pro rozpoznávání řeči Kaldi.
 Platforma podporuje dávkový a online způsob rozpoznávání řeči
-  a také obsahuje anotační prostředí pro přidávání přepisů k odeslaným nahrávkám.
+  a také obsahuje anotační prostředí pro přidávání přepisů k~odeslaným nahrávkám.
 Mezi klíčové vlastnosti této platformy patří škálovatelnost, přizpůsobitelnost a jednoduchý proces nasazení.
 Provedená měření dokázala,
-  že latence platformy je porovnatelná s latencí Google Speech API
+  že latence platformy je porovnatelná s~latencí Google Speech API
   a přesnost přepisů na omezených doménách může být dokonce lepší.
 Dále bylo ukázáno,
   že je platforma schopná zpracovat více než 1000 paralelních dotazů,
@@ -228,7 +215,7 @@ Dále bylo ukázáno,
 % abstrakt v rozsahu 80-200 slov; nejedná se však o opis zadání diplomové práce
 
 Klíčová slova:
-cloud, Kaldi, ASR
+cloud, rozpoznávání řeči, Kaldi
 % 3 až 5 klíčových slov
 
 \vss}\nobreak\vbox to 0.49\vsize{
@@ -266,7 +253,7 @@ Furthermore, the benchmarks show that the platform is able to handle more than 1
 % zadání diplomové práce
 
 Keywords:
-cloud, Kaldi, ASR
+cloud, automatic speech recognition, Kaldi
 % 3 až 5 klíčových slov v angličtině
 
 \vss}
@@ -319,13 +306,26 @@ cloud, Kaldi, ASR
 %%% textu práce. Přílohy se číslují.
 
 \appendix
-\chapter{CD Content}
 
-%\chapter{User Documentation}
-%\chapter{Developer Documentation}
-%\section{Installation}
-%\section{Deployment}
-%\section{Testing}
+\chapter{Content of the CD}
+The attached CD contains the following items:
+\begin{itemize}
+  \item CloudASR source codes
+  \item PDF file with the thesis
+  \item PDF file with the user documentation
+  \item PDF file with the programmer documentation
+\end{itemize}
+
+\chapter{User Documentation}
+This documentation describes several use cases for the users and the administrators of the CloudASR platform.
+\input{user}
+
+\chapter{Programmer Documentation}
+This documentation describes the installation and the deployment of the CloudASR platform.
+Also, it shows how CloudASR batch and online API can be used.
+Finally, it shows how SpeechRecognition.js library can be used to provide speech recognition capabilities directly in the web browsers.
+
+\input{programmer}
 
 
 \openright

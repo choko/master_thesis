@@ -1,0 +1,181 @@
+\section{Installation}
+Docker has to be installed in order to be able to run CloudASR locally.
+You can follow the install instructions at \url{http://tinyurl.com/install-docker}.
+Additionally, if you want to develop CloudASR, it is neccessary to install python requirements for testing with command \texttt{pip install requirements-pip.txt}.
+
+To be able to run CloudASR on multiple machines, a Mesos cluster has to be installed.
+The instructions for installation of a Mesos cluster can be found at \url{http://tinyurl.com/install-mesos}
+
+
+\section{Deployment}
+CloudASR deployment can be configured in the \texttt{cloudasr.json} file.
+In this file, you can specify:
+
+\begin{itemize}
+    \item Tag and source of the CloudASR Docker images
+    \item Workers that you want to run
+    \item Address of the Marathon and Master server
+    \item Address of the MySQL server
+    \item Credentials for Google Analytics
+\end{itemize}
+
+
+\begin{verbatim}{
+    "domain": "cloudasr.com",
+    "registry": "registry.hub.docker.io",
+    "tag": "latest",
+    "marathon_url": "http://127.0.0.1:8080",
+    "master_ip": "127.0.0.1",
+    "connection_string": "<mysql connection string>",
+    "google_login_client_id": "<google login client id>",
+    "google_login_client_secret": "<google login client secret>",
+    "ga_tracking_id": "",
+    "workers": [
+        {
+            "image": "ufaldsg/cloud-asr-worker-en-wiki",
+            "model": "en-wiki",
+            "instances": 4
+        }
+    ]
+}\end{verbatim}
+
+With this configuration file you can run the CloudASR platform on your machine with \texttt{make run\_locally} command.
+After that, you can use CloudASR API at \url{http://localhost:8000},
+  monitor running workers at \url{http://localhost:8001}
+  and open the CloudASR website at \url{http://localhost:8003}.
+
+Also, you can use this configuration file to run CloudASR on a Mesos cluster with \texttt{make run\_on\_mesos} command.
+After that, it is neccessary to start a load-balancer on a server associated with the domain specified in the configuration.
+You can do that by typing:
+
+\begin{verbatim}
+docker run -d -p 80:80
+    -e MARATHON_URL=localhost:8080
+    -e MARATHON_LOGIN=login
+    -e MARATHON_PASSWORD=password
+    choko/haproxy
+\end{verbatim}
+
+Then, you can use CloudASR API at \url{http://api.cloudasr.com},
+  view running workers at \url{http://monitor.cloudasr.com}
+  and open the CloudASR website on \url{http://www.cloudasr.com}.
+
+
+\section{Batch API Usage}
+
+Batch API is compatible with Google Speech API, but it supports only wave files and json output.
+Users can use parameter \texttt{lang} to specify which language they want to use for speech recognition.
+Currently, these languages are available now:
+
+\begin{itemize}
+\item
+    \textbf{en-towninfo} - English (VYSTADIAL TownInfo AM+LM)
+\item
+    \textbf{en-wiki} - English (TED AM+Wikipedia LM)
+\item
+    \textbf{cs} - Czech (VYSTADIAL AM + Wikipedia LM)
+\item
+    \textbf{cs-alex} - Czech (VYSTADIAL AM + PTIcs LM)
+\end{itemize}
+
+For example, if you want to transcribe English speech in a \texttt{recording.wav} file you can send the following curl request:
+
+\begin{verbatim}
+curl -X POST
+    --data-binary @recording.wav
+    --header 'Content-Type: audio/x-wav; rate=16000;'
+    'http://localhost:8000/recognize?lang=en-towninfo'
+\end{verbatim}
+
+
+And you should get a response similar to this:
+
+\begin{verbatim}
+{
+    "result": [
+        {
+            "alternative": [
+                {
+                    "confidence": 0.5549500584602356,
+                    "transcript": "I'M LOOKING FOR A BAR"
+                }
+            ],
+            "final": true
+        }
+    ]
+}
+\end{verbatim}
+
+
+\section{Online API Usage}
+
+Online API uses Socket.io library to transfer PCM chunks to the CloudASR server.
+Messages have following format:
+
+\subsection{Messages from Client to Server}
+
+\begin{itemize}
+  \item
+    First, you have to start recognition by sending information about used language.
+    \begin{verbatim}socketio.emit('begin', {'lang': 'en-GB'})\end{verbatim}
+  \item
+    After that, you can send PCM chunks to the server. Every chunk is a Base64 encoded 16 bit PCM string.
+\begin{verbatim}
+socketio.emit('chunk', {
+    'chunk': 'base64 encoded string',
+    'frame_rate': 16000
+})
+\end{verbatim}
+  \item
+    Finally, you end the recognition by sending following message
+    \begin{verbatim}socketio.emit('end', {})\end{verbatim}
+\end{itemize}
+
+\subsection{Messages from Server to Client}
+
+Server responds to every chunk with a message with interim results:
+
+\begin{verbatim}{
+    "status": 0,
+    "final": false,
+    "result": {
+        "hypotheses": [
+            {"transcript": "I AM LOOKING"}
+        ]
+    }
+}\end{verbatim}
+
+At the end of the recognition server sends the message in the same format,
+  but with \texttt{final: true} and n-best hypotheses.
+
+\section{SpeechRecognition.js Library Usage}
+
+If you want to use speech recognition on your website, you can use our JavaScript library.
+Please add the following scripts to your html:
+
+\begin{itemize}
+  \item \url{http://www.cloudasr.com/static/js/socket.io.js}
+  \item \url{http://www.cloudasr.com/static/js/Recorder.js}
+  \item \url{http://www.cloudasr.com/static/js/SpeechRecognition.js}
+\end{itemize}
+
+Then you can use SpeechRecognition in following manner:
+
+\begin{verbatim}
+var speechRecognition = new SpeechRecognition();
+speechRecognition.onStart = function() {
+    console.log("Recognition started");
+}
+
+speechRecognition.onEnd = function() {
+    console.log("Recognition ended");
+}
+
+speechRecognition.onError = function(error) {
+    console.log("Error occurred: " + error);
+}
+
+speechRecognition.onResult = function(result) {
+    console.log(result);
+}
+\end{verbatim}
